@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hostel Expense Manager</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<link rel="manifest" href="manifest.json">
+
+<style>
+
+body{
+font-family:Arial;
+padding:10px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:10px
+}
+
+th,td{
+border:1px solid #aaa;
+padding:6px;
+text-align:center
+}
+
+.green{color:green;font-weight:bold}
+.red{color:red;font-weight:bold}
+
+.balancePositive{
+color:green;
+font-weight:bold
+}
+
+.balanceNegative{
+color:red;
+font-weight:bold
+}
+
+button{
+margin:3px;
+padding:6px 10px
+}
+
+.nav{margin-bottom:10px}
+
+.page{display:none}
+
+.memberBtn{
+font-size:12px;
+padding:3px 6px
+}
+
+</style>
+</head>
+
+<body>
+
+<h2>Hostel Expense Manager</h2>
+
+<div class="nav">
+<button onclick="showPage('entryPage')">Entry</button>
+<button onclick="showPage('recordsPage')">Records</button>
+<button onclick="showPage('membersPage')">Members</button>
+<button onclick="showPage('analysisPage')">Analysis</button>
+<button onclick="backupData()">Backup</button>
+<button onclick="restoreData()">Restore</button>
+<button onclick="shareToday()">Share Today</button>
+<button onclick="resetMonth()">Monthly Reset</button>
+</div>
+
+
+<!-- MEMBERS -->
+
+<div id="membersPage" class="page">
+
+<h3>Members</h3>
+
+<input id="memberName" placeholder="Member name">
+
+<button onclick="addMember()">Add</button>
+
+<ul id="memberList"></ul>
+
+</div>
+
+
+<!-- ENTRY -->
+
+<div id="entryPage" class="page">
+
+<h3>Add Entry</h3>
+
+<input id="desc" placeholder="Description"><br><br>
+
+<input id="amount" type="number" placeholder="Amount"><br><br>
+
+<select id="type">
+<option value="collection">Collection</option>
+<option value="expense">Expense</option>
+</select>
+
+<br><br>
+
+<select id="category">
+<option>Food</option>
+<option>Milk</option>
+<option>Gas</option>
+<option>Cleaning</option>
+<option>Other</option>
+</select>
+
+<br><br>
+
+<select id="paidBy">
+<option value="">Paid By</option>
+</select>
+
+<h4>Included Members</h4>
+
+<div id="memberChecks"></div>
+
+<button onclick="addEntry()">Add Entry</button>
+
+</div>
+
+
+
+<!-- RECORDS -->
+
+<div id="recordsPage" class="page">
+
+<h3>Records</h3>
+
+<table>
+
+<thead>
+
+<tr>
+<th>Date</th>
+<th>Description</th>
+<th>Type</th>
+<th>Category</th>
+<th>Amount</th>
+<th>Per Head</th>
+<th>Members</th>
+<th>Paid By</th>
+<th>Edit</th>
+</tr>
+
+</thead>
+
+<tbody id="records"></tbody>
+
+</table>
+
+</div>
+
+
+<!-- ANALYSIS -->
+
+<div id="analysisPage" class="page">
+
+<h3>Balance Summary</h3>
+
+<div id="balance"></div>
+
+<canvas id="expenseChart"></canvas>
+
+</div>
+
+
+
+<script>
+
+let members=JSON.parse(localStorage.getItem("members")||"[]");
+let records=JSON.parse(localStorage.getItem("records")||"[]");
+
+
+function save(){
+
+localStorage.setItem("members",JSON.stringify(members));
+localStorage.setItem("records",JSON.stringify(records));
+
+syncCloud();
+
+}
+
+
+function showPage(id){
+
+document.querySelectorAll(".page").forEach(p=>p.style.display="none");
+
+document.getElementById(id).style.display="block";
+
+}
+
+
+
+function addMember(){
+
+let m=document.getElementById("memberName").value.trim();
+
+if(!m)return;
+
+members.push(m);
+
+document.getElementById("memberName").value="";
+
+save();
+
+render();
+
+}
+
+
+
+function editMember(i){
+
+let newName=prompt("Edit member",members[i]);
+
+if(!newName)return;
+
+let oldName=members[i];
+
+members[i]=newName;
+
+records.forEach(r=>{
+
+r.members=r.members.map(m=>m===oldName?newName:m);
+
+if(r.paidBy===oldName)r.paidBy=newName;
+
+});
+
+save();
+
+render();
+
+}
+
+
+
+function deleteMember(i){
+
+let name=members[i];
+
+if(!confirm("Delete "+name+" ?"))return;
+
+members.splice(i,1);
+
+records.forEach(r=>{
+r.members=r.members.filter(m=>m!==name);
+});
+
+save();
+
+render();
+
+}
+
+
+
+function addEntry(){
+
+let amt=document.getElementById("amount").value;
+
+let included=[...document.querySelectorAll("#memberChecks input:checked")].map(i=>i.value);
+
+if(!amt||included.length==0)return;
+
+records.push({
+
+date:new Date().toLocaleString(),
+
+desc:document.getElementById("desc").value||"-",
+
+type:document.getElementById("type").value,
+
+category:document.getElementById("category").value,
+
+amount:Number(amt),
+
+members:included,
+
+paidBy:document.getElementById("paidBy").value
+
+});
+
+document.getElementById("amount").value="";
+document.getElementById("desc").value="";
+
+save();
+
+render();
+
+}
+
+
+
+function editEntry(i){
+
+let r=records[i];
+
+let amt=prompt("Amount",r.amount);
+
+let desc=prompt("Description",r.desc);
+
+let type=prompt("Type (collection/expense)",r.type);
+
+let payer=prompt("Paid by",r.paidBy);
+
+if(!amt)return;
+
+records[i].amount=Number(amt);
+records[i].desc=desc;
+records[i].type=type;
+records[i].paidBy=payer;
+
+save();
+render();
+
+}
+
+
+
+function render(){
+
+document.getElementById("memberList").innerHTML=
+
+members.map((m,i)=>`
+
+<li>
+
+${m}
+
+<button class="memberBtn" onclick="editMember(${i})">Edit</button>
+
+<button class="memberBtn" onclick="deleteMember(${i})">Delete</button>
+
+</li>
+
+`).join("");
+
+
+
+document.getElementById("memberChecks").innerHTML=
+
+members.map(m=>`
+
+<label>
+
+<input type="checkbox" value="${m}" checked>
+
+${m}
+
+</label><br>
+
+`).join("");
+
+
+
+document.getElementById("paidBy").innerHTML=
+
+'<option value="">Paid By</option>'+
+
+members.map(m=>`<option value="${m}">${m}</option>`).join("");
+
+
+
+let tb="";
+
+records.forEach((r,i)=>{
+
+let per=(r.amount/r.members.length).toFixed(2);
+
+tb+=`
+
+<tr>
+
+<td>${r.date}</td>
+
+<td>${r.desc}</td>
+
+<td class="${r.type=='collection'?'green':'red'}">${r.type}</td>
+
+<td>${r.category}</td>
+
+<td>${r.amount}</td>
+
+<td>${per}</td>
+
+<td>${r.members.join(", ")}</td>
+
+<td>${r.paidBy||"-"}</td>
+
+<td><button onclick="editEntry(${i})">Edit</button></td>
+
+</tr>
+
+`;
+
+});
+
+document.getElementById("records").innerHTML=tb;
+
+calculateBalance();
+
+}
+
+
+
+function calculateBalance(){
+
+let bal={};
+
+let exp={};
+
+members.forEach(m=>{
+bal[m]=0;
+exp[m]=0;
+});
+
+records.forEach(r=>{
+
+let share=r.amount/r.members.length;
+
+r.members.forEach(m=>{
+
+bal[m]+=r.type=="collection"?share:-share;
+
+if(r.type=="expense")exp[m]+=share;
+
+});
+
+if(r.paidBy){
+bal[r.paidBy]+=r.amount;
+}
+
+});
+
+
+let html="";
+
+Object.keys(bal).forEach(m=>{
+
+let cls=bal[m]>=0?"balancePositive":"balanceNegative";
+
+html+=`<div class="${cls}">${m}: ${bal[m].toFixed(2)}</div>`;
+
+});
+
+
+document.getElementById("balance").innerHTML=html;
+
+
+let labels=[];
+let data=[];
+
+members.forEach(m=>{
+labels.push(m);
+data.push(exp[m]);
+});
+
+
+if(window.chart)window.chart.destroy();
+
+window.chart=new Chart(document.getElementById("expenseChart"),{
+
+type:'pie',
+
+data:{
+labels:labels,
+datasets:[{
+data:data,
+backgroundColor:[
+'#ff6384',
+'#36a2eb',
+'#ffcd56',
+'#4bc0c0',
+'#9966ff',
+'#ff9f40'
+]
+}]
+}
+
+});
+
+}
+
+
+
+function backupData(){
+
+let data={
+members:members,
+records:records
+};
+
+let blob=new Blob([JSON.stringify(data)],{type:"application/json"});
+
+let a=document.createElement("a");
+
+a.href=URL.createObjectURL(blob);
+
+a.download="expense-backup.json";
+
+a.click();
+
+}
+
+
+
+function restoreData(){
+
+let input=document.createElement("input");
+
+input.type="file";
+
+input.onchange=e=>{
+
+let file=e.target.files[0];
+
+let reader=new FileReader();
+
+reader.onload=function(){
+
+let data=JSON.parse(reader.result);
+
+members=data.members||[];
+
+records=data.records||[];
+
+save();
+
+render();
+
+};
+
+reader.readAsText(file);
+
+};
+
+input.click();
+
+}
+
+
+
+function shareToday(){
+
+let today=new Date().toLocaleDateString();
+
+let todayRecords=records.filter(r=>r.date.includes(today));
+
+if(todayRecords.length==0)return alert("No records today");
+
+
+let bal={};
+
+members.forEach(m=>bal[m]=0);
+
+records.forEach(r=>{
+
+let share=r.amount/r.members.length;
+
+r.members.forEach(m=>{
+bal[m]+=r.type=="collection"?share:-share;
+});
+
+if(r.paidBy)bal[r.paidBy]+=r.amount;
+
+});
+
+
+let text="Hostel Expense Report\n\n";
+
+todayRecords.forEach(r=>{
+text+=`${r.desc} (${r.category}) — ${r.amount}\n`;
+});
+
+
+text+="\nUpdated Balance\n";
+
+Object.keys(bal).forEach(m=>{
+text+=`${m}: ${bal[m].toFixed(2)}\n`;
+});
+
+
+navigator.share?
+navigator.share({title:"Expense",text:text}):
+alert(text);
+
+}
+
+
+
+function resetMonth(){
+
+if(confirm("Clear records?")){
+
+records=[];
+
+save();
+
+render();
+
+}
+
+}
+
+
+
+/* CLOUD SYNC */
+
+async function syncCloud(){
+
+// Firebase config here
+
+}
+
+
+
+render();
+
+showPage("entryPage");
+
+
+
+/* PWA SERVICE WORKER */
+
+if("serviceWorker" in navigator){
+
+navigator.serviceWorker.register("sw.js");
+
+}
+
+</script>
+
+</body>
+</html>
