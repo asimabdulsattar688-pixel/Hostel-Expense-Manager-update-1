@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Hostel Expense Pro v9.1</title>
+    <title>Hostel Expense Pro v11.0</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
@@ -67,7 +67,7 @@
             z-index: 10;
         }
         .top-navbar .brand { font-weight: bold; font-size: 16px; }
-        .top-navbar .menu-btn { font-size: 20px; cursor: pointer; background: none; border: none; color: white; width: auto; padding: 0; }
+        .top-navbar .menu-btn { font-size: 22px; cursor: pointer; background: none; border: none; color: white; width: auto; padding: 0; }
 
         .app-container { display: flex; flex-grow: 1; height: calc(100vh - 50px); overflow: hidden; }
 
@@ -83,18 +83,18 @@
         }
         .nav-item {
             width: 100%;
-            padding: 12px 2px;
+            padding: 10px 2px;
             text-align: center;
             cursor: pointer;
-            font-size: 11px;
+            font-size: 10px;
             color: #bdc3c7;
             border-left: 3px solid transparent;
         }
         .nav-item.active { background: rgba(255,255,255,0.1); color: white; border-left-color: var(--accent); }
-        .nav-item i { display: block; font-size: 18px; margin-bottom: 3px; }
+        .nav-item i { display: block; font-size: 16px; margin-bottom: 2px; }
 
         .main-content { flex-grow: 1; height: 100%; overflow-y: auto; padding: 12px; }
-        .page { display: none; max-width: 900px; margin: 0 auto; animation: fadeIn 0.2s; }
+        .page { display: none; max-width: 950px; margin: 0 auto; animation: fadeIn 0.2s; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         .card {
@@ -105,15 +105,14 @@
             margin-bottom: 12px;
             border: 1px solid var(--border-color);
             width: 100%;
-            box-sizing: border-border;
             overflow: hidden;
         }
 
         h2, h3, h4 { margin-top: 0; color: var(--text-color); }
         input, select, button {
             width: 100%;
-            padding: 10px;
-            margin: 5px 0;
+            padding: 9px;
+            margin: 4px 0;
             border-radius: 6px;
             border: 1px solid var(--border-color);
             background: var(--card-bg);
@@ -126,31 +125,13 @@
         .btn-edit { background: #3498db; }
         .icon-btn { width: auto; padding: 4px 8px; font-size: 12px; display: inline-block; }
 
-        /* FIXED TYPE SELECTOR TO PREVENT SETTLEMENT OVERFLOW */
-        .type-selector {
-            display: flex;
-            gap: 4px;
-            margin-bottom: 15px;
-            width: 100%;
-        }
+        .type-selector { display: flex; gap: 4px; margin-bottom: 12px; width: 100%; }
         .type-btn {
-            flex: 1 1 0;
-            min-width: 0;
-            padding: 8px 2px;
-            font-size: 11px;
-            border: 1px solid var(--border-color);
-            background: var(--bg);
-            color: var(--text-color);
-            cursor: pointer;
-            border-radius: 6px;
-            font-weight: bold;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 2px;
+            flex: 1 1 0; min-width: 0; padding: 8px 2px; font-size: 11px;
+            border: 1px solid var(--border-color); background: var(--bg); color: var(--text-color);
+            cursor: pointer; border-radius: 6px; font-weight: bold;
+            white-space: nowrap; text-overflow: ellipsis; overflow: hidden;
+            display: flex; align-items: center; justify-content: center; gap: 2px;
         }
         .type-btn.active-exp { background: var(--danger); color: white; border-color: var(--danger); }
         .type-btn.active-col { background: var(--success); color: white; border-color: var(--success); }
@@ -161,16 +142,22 @@
         .val-neg { color: var(--danger); font-weight: bold; }
         .account-card { background: var(--primary); color: white; padding: 15px; border-radius: 12px; text-align: center; margin-bottom: 12px; }
 
-        /* RESTORED FULL HORIZONTAL SCROLLING FOR TABLES */
         .table-wrapper { width: 100%; overflow-x: auto; border: 1px solid var(--border-color); border-radius: 8px; }
-        table { width: 100%; border-collapse: collapse; font-size: 11px; min-width: 480px; }
-        th, td { padding: 8px 6px; text-align: center; border-bottom: 1px solid var(--border-color); white-space: nowrap; }
-        th { background: rgba(0,0,0,0.03); }
+        table { width: 100%; border-collapse: collapse; font-size: 11px; min-width: 550px; }
+        th, td { padding: 8px 6px; text-align: center; border-bottom: 1px solid var(--border-color); border-right: 1px solid var(--border-color); white-space: nowrap; }
+        th { background: rgba(0,0,0,0.04); }
+        .sub-header { font-size: 9px; opacity: 0.85; font-weight: normal; }
+        .bal-cell { font-weight: bold; }
         .action-btns { display: flex; gap: 4px; justify-content: center; }
         label.section-label { font-size: 11px; font-weight: bold; color: #7f8c8d; display: block; margin-top: 6px; }
 
         .modal-overlay { display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:1000; }
-        .modal-content { background:var(--card-bg); padding:18px; border-radius:12px; width:92%; max-width:480px; max-height: 90vh; overflow-y: auto; }
+        .modal-content-half {
+            background: var(--card-bg); padding: 15px; border-radius: 12px 12px 0 0;
+            width: 100%; max-width: 600px; height: 55vh; position: fixed; bottom: 0;
+            overflow-y: auto; border-top: 3px solid var(--accent); box-shadow: 0 -5px 20px rgba(0,0,0,0.2);
+        }
+        .modal-content { background:var(--card-bg); padding:16px; border-radius:12px; width:92%; max-width:480px; max-height: 85vh; overflow-y: auto; }
 
         .two-week-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 6px; margin-top: 8px; }
         .day-box { border: 1px solid var(--border-color); padding: 6px; border-radius: 6px; text-align: center; background: var(--card-bg); }
@@ -179,20 +166,21 @@
         .dynamic-field { display: none; }
         .toggle-row { display: flex; justify-content: space-between; align-items: center; margin: 8px 0; }
         .toggle-row input { width: auto; }
-        .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
     </style>
 </head>
 <body>
 
     <div class="top-navbar">
-        <span class="brand">Hostel Expense Pro v9.1</span>
-        <button class="menu-btn" onclick="openSettingsModal()">⚙️</button>
+        <span class="brand">Hostel Expense Pro v11.0</span>
+        <button class="menu-btn" id="threeLineMenuBtn" onclick="toggleSettingsModal()">☰</button>
     </div>
 
     <div class="app-container">
         <div class="sidebar">
             <div class="nav-item active" onclick="showPage('entryPage', this)"><i>📝</i>Entry</div>
             <div class="nav-item" onclick="showPage('recordsPage', this)"><i>📜</i>Records</div>
+            <div class="nav-item" onclick="showPage('statusPage', this)"><i>💵</i>Status</div>
             <div class="nav-item" onclick="showPage('userPage', this)"><i>📊</i>Analysis</div>
             <div class="nav-item" onclick="showPage('sharePage', this)"><i>🔗</i>Share</div>
         </div>
@@ -201,7 +189,7 @@
             <!-- ENTRY PAGE -->
             <div id="entryPage" class="page" style="display:block">
                 <h3>📝 New Transaction Entry</h3>
-                <div class="card" id="entryCard">
+                <div class="card">
                     <label class="section-label">Select Transaction Type:</label>
                     <div class="type-selector">
                         <button type="button" class="type-btn active-exp" id="btnTypeExp" onclick="setEntryType('expense')">💸 Expense</button>
@@ -209,7 +197,7 @@
                         <button type="button" class="type-btn" id="btnTypeSet" onclick="setEntryType('settlement')">🤝 Settlement</button>
                     </div>
 
-                    <input id="entryDesc" placeholder="Description (e.g. Dinner, Mess Fund, Loan payback)">
+                    <input id="entryDesc" placeholder="Description (e.g. Dinner, Mess Fund)">
                     <input id="entryAmt" type="number" placeholder="Amount (Rs.)">
                     <input id="entryDate" type="date">
 
@@ -234,13 +222,16 @@
 
             <!-- RECORDS PAGE -->
             <div id="recordsPage" class="page">
-                <div class="header-flex">
-                    <h2 style="margin:0;">Financial Records</h2>
-                    <button class="icon-btn" onclick="toggleRecordEditMode()" style="background:none; border:none; font-size:20px;" title="Enable/Disable Record Editing">✏️</button>
-                </div>
+                <h2>Financial Records</h2>
                 <div class="card">
-                    <input id="recordSearchInput" placeholder="🔍 Search by Description or Member Name..." onkeyup="renderRecords()">
+                    <input id="recordSearchInput" placeholder="🔍 Search Description or Name..." onkeyup="renderRecords()">
                 </div>
+                
+                <div class="header-flex" style="padding: 0 4px;">
+                    <label class="section-label" style="margin:0;">Transactions Table (Newest First)</label>
+                    <button class="icon-btn" onclick="toggleRecordEditMode()" style="background:none; border:none; font-size:18px;" title="Enable/Disable Table Actions">✏️ Actions Toggle</button>
+                </div>
+
                 <div class="card table-wrapper">
                     <table>
                         <thead>
@@ -258,23 +249,27 @@
                     </table>
                 </div>
             </div>
-            <!-- ANALYSIS PAGE -->
-            <div id="userPage" class="page">
-                <!-- 1. Common Account Balance at Top -->
+
+            <!-- CURRENT STATUS TAB -->
+            <div id="statusPage" class="page">
+                <h2>💵 Current Account Status</h2>
                 <div class="account-card">
                     <div style="font-size: 12px; opacity: 0.8;">Common Account Balance</div>
                     <div id="commonBalance" style="font-size: 26px; font-weight: bold;">Rs. 0</div>
                 </div>
 
-                <!-- 2. Net Balance Table -->
                 <div class="card">
                     <h3>⚖️ Net Account Balance Summary</h3>
-                    <div id="analysisDisplay"></div>
+                    <div id="statusDisplay"></div>
                 </div>
+            </div>
+            <!-- ANALYSIS TAB -->
+            <div id="userPage" class="page">
+                <h2>📊 Financial Analysis & Auditing</h2>
 
-                <!-- 3. Per Head Record Grid -->
-                <div class="card">
-                    <h3>📊 Per-Head Expense Distribution Grid</h3>
+                <div class="card" id="cardPerHead">
+                    <h3>📊 Per-Head Expense & Ledger Balance Grid</h3>
+                    <div style="font-size: 10px; color: #7f8c8d; margin-bottom: 8px;">* Sorted from Newest Date at Top to Oldest. Displays individual share alongside running remaining balance after each transaction.</div>
                     <div class="table-wrapper">
                         <table id="perHeadTable">
                             <thead id="perHeadHead"></thead>
@@ -283,8 +278,7 @@
                     </div>
                 </div>
 
-                <!-- 4. Admin Personal Record Audit Monitor -->
-                <div class="card" style="border: 1px solid var(--accent);">
+                <div class="card" id="cardAdminAudit" style="border: 1px solid var(--accent);">
                     <div class="header-flex">
                         <h3 style="margin:0;">👑 Admin Personal Audit Monitor</h3>
                         <span id="adminBadge" style="font-size:11px; background:var(--accent); color:white; padding:2px 6px; border-radius:4px;">Admin</span>
@@ -294,21 +288,18 @@
                     <div id="adminAuditDisplay" style="margin-top:10px; font-size:12px;"></div>
                 </div>
 
-                <!-- 5. Daily Expense Filter -->
                 <div class="card" id="cardDailyFilter">
                     <h3>📅 Daily Expense Filter</h3>
                     <input type="date" id="dailyFilterDate" onchange="renderDailyExpense()">
                     <div id="dailyExpenseResult" style="margin-top:10px; font-weight:bold; font-size:12px;">Select a date to inspect spending</div>
                 </div>
 
-                <!-- 6. Last 14 Days Trend -->
                 <div class="card" id="card14DayTrend">
                     <h3>🗓️ Last 14 Days Spending Trend</h3>
                     <div id="twoWeekContainer" class="two-week-grid"></div>
                 </div>
 
-                <!-- 7. Expense Consumption Chart -->
-                <div class="card">
+                <div class="card" id="cardPieChart">
                     <h3>Pie Chart: Consumption Share</h3>
                     <canvas id="expenseChart"></canvas>
                 </div>
@@ -327,8 +318,8 @@
                     <select id="shareMemberSelect"></select>
                     <label class="section-label">Timeline Range:</label>
                     <div style="display:flex; gap:5px;">
-                        <input type="date" id="shareStartDate" placeholder="Start Date">
-                        <input type="date" id="shareEndDate" placeholder="End Date">
+                        <input type="date" id="shareStartDate">
+                        <input type="date" id="shareEndDate">
                     </div>
                     <button class="btn-warning" style="margin-top:10px;" onclick="shareIndividual()">Generate & Share Member Report</button>
                 </div>
@@ -336,18 +327,26 @@
         </div>
     </div>
 
-    <!-- SETTINGS MODAL -->
+    <!-- HALF PAGE SETTINGS MODAL -->
     <div id="settingsModal" class="modal-overlay">
-        <div class="modal-content">
+        <div class="modal-content-half">
             <div class="header-flex">
-                <h3 style="margin:0;">⚙️ Settings & Administration</h3>
-                <button class="icon-btn" onclick="toggleEditMemberMode()" title="Toggle Member Edit Mode" style="background:none; border:none; font-size:18px;">✏️</button>
+                <h3 style="margin:0;">⚙️ System Settings</h3>
+                <button class="icon-btn" onclick="toggleEditMemberMode()" title="Toggle Member Edit Mode" style="background:none; border:none; font-size:18px;">✏️ Members</button>
             </div>
             
             <div class="card">
-                <h3>System Admin Selection</h3>
                 <label class="section-label">Designate Admin Profile:</label>
                 <select id="adminMemberSelect" onchange="changeAdminMember(this.value)"></select>
+            </div>
+
+            <div class="card">
+                <h3>Analysis Modules Visibility</h3>
+                <div class="toggle-row"><span>Per-Head Ledger Distribution</span><input type="checkbox" id="togglePerHead" onchange="toggleFeature('perHead', this.checked)"></div>
+                <div class="toggle-row"><span>Admin Personal Audit</span><input type="checkbox" id="toggleAdminAudit" onchange="toggleFeature('adminAudit', this.checked)"></div>
+                <div class="toggle-row"><span>Daily Expense Filter</span><input type="checkbox" id="toggleDailyFilter" onchange="toggleFeature('dailyFilter', this.checked)"></div>
+                <div class="toggle-row"><span>14-Day Spending Trend</span><input type="checkbox" id="toggle14DayTrend" onchange="toggleFeature('trend14Day', this.checked)"></div>
+                <div class="toggle-row"><span>Consumption Pie Chart</span><input type="checkbox" id="togglePieChart" onchange="toggleFeature('pieChart', this.checked)"></div>
             </div>
 
             <div class="card">
@@ -357,25 +356,12 @@
                     <option value="dark">Dark Mode</option>
                     <option value="midnight">Midnight Mode</option>
                 </select>
-                <label class="section-label">Upload Custom Wallpaper:</label>
                 <input type="file" id="bgUploader" accept="image/*" onchange="handleBgUpload(event)">
-                <button class="btn-danger" style="padding:4px; font-size:10px; margin-top:5px;" onclick="clearCustomBg()">Clear Custom Background</button>
+                <button class="btn-danger" style="padding:4px; font-size:10px; margin-top:5px;" onclick="clearCustomBg()">Clear Background</button>
             </div>
 
             <div class="card">
-                <h3>Feature Controls</h3>
-                <div class="toggle-row">
-                    <span>Daily Expense Filter</span>
-                    <input type="checkbox" id="toggleDailyFilter" onchange="toggleFeature('dailyFilter', this.checked)">
-                </div>
-                <div class="toggle-row">
-                    <span>Last 14 Days Spending Trend</span>
-                    <input type="checkbox" id="toggle14DayTrend" onchange="toggleFeature('trend14Day', this.checked)">
-                </div>
-            </div>
-
-            <div class="card">
-                <h3>Manage Members & Status</h3>
+                <h3>Manage Members</h3>
                 <div id="manageMembersList"></div>
                 <div style="display:flex; gap:5px; margin-top:10px;">
                     <input id="newMemberName" placeholder="New Member Name">
@@ -383,26 +369,41 @@
                 </div>
             </div>
 
-            <div class="card" style="text-align: center; background: rgba(52,152,219,0.1);">
-                <h4 style="margin-bottom: 2px;">About the Author</h4>
-                <p style="margin: 0; font-weight: bold; color: var(--accent);">Asim Shahzad</p>
-            </div>
-
-            <button class="btn-danger" style="background:#7f8c8d; margin-top:10px;" onclick="closeSettingsModal()">Close</button>
+            <button class="btn-danger" style="background:#7f8c8d; margin-top:10px;" onclick="toggleSettingsModal()">Close Panel</button>
         </div>
     </div>
 
-    <!-- EDIT RECORD MODAL -->
+    <!-- ADVANCED DYNAMIC EDIT RECORD MODAL -->
     <div id="editModal" class="modal-overlay">
         <div class="modal-content">
-            <h3>📝 Edit Record Details</h3>
+            <h3>✏️ Dynamic Edit Record</h3>
+            
+            <label class="section-label">Transaction Type:</label>
+            <div class="type-selector">
+                <button type="button" class="type-btn" id="btnEditExp" onclick="setEditType('expense')">💸 Expense</button>
+                <button type="button" class="type-btn" id="btnEditCol" onclick="setEditType('collection')">💰 Collection</button>
+                <button type="button" class="type-btn" id="btnEditSet" onclick="setEditType('settlement')">🤝 Settlement</button>
+            </div>
+
             <input id="editDesc" placeholder="Description">
             <input id="editAmt" type="number" placeholder="Amount">
-            <label class="section-label">Paid By:</label>
-            <select id="editPayer"></select>
-            <label class="section-label">Included Members:</label>
-            <div id="editMemberChecks" style="display:grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top:5px; margin-bottom:15px;"></div>
-            <button class="btn-success" onclick="saveEdits()">Save Changes</button>
+            
+            <div id="editFieldPayer" class="dynamic-field">
+                <label class="section-label" id="editPayerLabel">Paid By:</label>
+                <select id="editPayer"></select>
+            </div>
+
+            <div id="editFieldReceiver" class="dynamic-field">
+                <label class="section-label">Paid To (Receiver):</label>
+                <select id="editReceiver"></select>
+            </div>
+
+            <div id="editFieldMembers" class="dynamic-field">
+                <label class="section-label">Included Members:</label>
+                <div id="editMemberChecks" style="display:grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top:5px;"></div>
+            </div>
+
+            <button class="btn-success" style="margin-top:15px;" onclick="saveEdits()">Save Updates</button>
             <button class="btn-danger" style="background:#7f8c8d; margin-top:5px;" onclick="closeModal()">Cancel</button>
         </div>
     </div>
@@ -413,12 +414,14 @@
         let currentTheme = localStorage.getItem("currentTheme") || "light";
         let customBg = localStorage.getItem("customBg") || null;
         let adminMember = localStorage.getItem("adminMember") || members[0];
-        let featureToggles = JSON.parse(localStorage.getItem("featureToggles") || '{"dailyFilter":true, "trend14Day":true}');
+        let featureToggles = JSON.parse(localStorage.getItem("featureToggles") || '{"perHead":true,"adminAudit":true,"dailyFilter":true,"trend14Day":true,"pieChart":true}');
 
         let currentEntryType = 'expense';
+        let currentEditType = 'expense';
         let activeEditId = null;
         let isMemberEditMode = false;
         let isRecordEditMode = false;
+        let isSettingsOpen = false;
 
         members.forEach(m => { if(messStatus[m] === undefined) messStatus[m] = true; });
 
@@ -431,6 +434,14 @@
             localStorage.setItem("featureToggles", JSON.stringify(featureToggles));
             if(customBg) localStorage.setItem("customBg", customBg);
             else localStorage.removeItem("customBg");
+        }
+
+        function getSortedRecordsNewestFirst() {
+            return records.slice().sort((a, b) => new Date(b.date) - new Date(a.date) || Number(b.id) - Number(a.id));
+        }
+
+        function getSortedRecordsChronological() {
+            return records.slice().sort((a, b) => new Date(a.date) - new Date(b.date) || Number(a.id) - Number(b.id));
         }
 
         function applyThemeAndBg() {
@@ -447,6 +458,19 @@
         function changeTheme(val) { currentTheme = val; save(); applyThemeAndBg(); }
         function changeAdminMember(val) { adminMember = val; save(); renderAnalysis(); }
 
+        function toggleSettingsModal() {
+            isSettingsOpen = !isSettingsOpen;
+            document.getElementById("threeLineMenuBtn").innerText = isSettingsOpen ? "✕" : "☰";
+            if(isSettingsOpen) {
+                renderMemberList();
+                document.getElementById("themeSelect").value = currentTheme;
+                document.getElementById("adminMemberSelect").innerHTML = members.map(m => `<option value="${m}" ${m===adminMember?'selected':''}>${m}</option>`).join("");
+                document.getElementById("settingsModal").style.display = "flex";
+            } else {
+                document.getElementById("settingsModal").style.display = "none";
+            }
+        }
+
         function handleBgUpload(e) {
             const file = e.target.files[0];
             if(file) {
@@ -455,7 +479,6 @@
                 reader.readAsDataURL(file);
             }
         }
-
         function clearCustomBg() { customBg = null; save(); applyThemeAndBg(); }
 
         function toggleFeature(feat, state) {
@@ -464,10 +487,17 @@
         }
 
         function applyFeatureToggles() {
+            document.getElementById("cardPerHead").style.display = featureToggles.perHead ? "block" : "none";
+            document.getElementById("cardAdminAudit").style.display = featureToggles.adminAudit ? "block" : "none";
             document.getElementById("cardDailyFilter").style.display = featureToggles.dailyFilter ? "block" : "none";
             document.getElementById("card14DayTrend").style.display = featureToggles.trend14Day ? "block" : "none";
+            document.getElementById("cardPieChart").style.display = featureToggles.pieChart ? "block" : "none";
+
+            document.getElementById("togglePerHead").checked = featureToggles.perHead;
+            document.getElementById("toggleAdminAudit").checked = featureToggles.adminAudit;
             document.getElementById("toggleDailyFilter").checked = featureToggles.dailyFilter;
             document.getElementById("toggle14DayTrend").checked = featureToggles.trend14Day;
+            document.getElementById("togglePieChart").checked = featureToggles.pieChart;
         }
 
         function toggleRecordEditMode() {
@@ -491,16 +521,12 @@
                 document.getElementById("fieldPayer").style.display = "block";
                 document.getElementById("fieldReceiver").style.display = "none";
                 document.getElementById("fieldMembers").style.display = "block";
-                document.getElementById("submitEntryBtn").className = "btn-danger";
-                document.getElementById("submitEntryBtn").innerText = "Save Expense Record";
             } else if(type === 'collection') {
-                document.getElementById("payerLabel").innerText = "Member Submitting Money:";
+                document.getElementById("payerLabel").innerText = "Submitting Member:";
                 document.getElementById("entryPayer").innerHTML = mOptions;
                 document.getElementById("fieldPayer").style.display = "block";
                 document.getElementById("fieldReceiver").style.display = "none";
                 document.getElementById("fieldMembers").style.display = "none";
-                document.getElementById("submitEntryBtn").className = "btn-success";
-                document.getElementById("submitEntryBtn").innerText = "Add Collection Record";
             } else if(type === 'settlement') {
                 document.getElementById("payerLabel").innerText = "Paid By (Payer):";
                 document.getElementById("entryPayer").innerHTML = mOptions;
@@ -508,8 +534,37 @@
                 document.getElementById("fieldPayer").style.display = "block";
                 document.getElementById("fieldReceiver").style.display = "block";
                 document.getElementById("fieldMembers").style.display = "none";
-                document.getElementById("submitEntryBtn").className = "btn-warning";
-                document.getElementById("submitEntryBtn").innerText = "Record Settlement";
+            }
+        }
+
+        function setEditType(type) {
+            currentEditType = type;
+            document.getElementById("btnEditExp").className = "type-btn " + (type === 'expense' ? 'active-exp' : '');
+            document.getElementById("btnEditCol").className = "type-btn " + (type === 'collection' ? 'active-col' : '');
+            document.getElementById("btnEditSet").className = "type-btn " + (type === 'settlement' ? 'active-set' : '');
+
+            const mOptions = members.map(m => `<option value="${m}">${m}</option>`).join("");
+            const commonOption = `<option value="Common">Common Fund Account</option>`;
+
+            if(type === 'expense') {
+                document.getElementById("editPayerLabel").innerText = "Paid By:";
+                document.getElementById("editPayer").innerHTML = commonOption + mOptions;
+                document.getElementById("editFieldPayer").style.display = "block";
+                document.getElementById("editFieldReceiver").style.display = "none";
+                document.getElementById("editFieldMembers").style.display = "block";
+            } else if(type === 'collection') {
+                document.getElementById("editPayerLabel").innerText = "Submitting Member:";
+                document.getElementById("editPayer").innerHTML = mOptions;
+                document.getElementById("editFieldPayer").style.display = "block";
+                document.getElementById("editFieldReceiver").style.display = "none";
+                document.getElementById("editFieldMembers").style.display = "none";
+            } else if(type === 'settlement') {
+                document.getElementById("editPayerLabel").innerText = "Paid By (Payer):";
+                document.getElementById("editPayer").innerHTML = mOptions;
+                document.getElementById("editReceiver").innerHTML = mOptions;
+                document.getElementById("editFieldPayer").style.display = "block";
+                document.getElementById("editFieldReceiver").style.display = "block";
+                document.getElementById("editFieldMembers").style.display = "none";
             }
         }
 
@@ -519,23 +574,17 @@
             const date = document.getElementById("entryDate").value;
             const payer = document.getElementById("entryPayer").value;
 
-            if(!desc || !amt || !date) return alert("Please fill description, amount, and date.");
+            if(!desc || !amt || !date) return alert("Fill all fields.");
 
             let included = [], receiver = null;
             if(currentEntryType === 'expense') {
                 included = [...document.querySelectorAll("#entryMemberChecks input:checked")].map(i => i.value);
-                if(included.length === 0) return alert("Select at least one member.");
             } else if(currentEntryType === 'settlement') {
                 receiver = document.getElementById("entryReceiver").value;
-                if(payer === receiver) return alert("Payer and receiver cannot be identical.");
             }
 
             records.push({ id: Date.now().toString(), date, desc, type: currentEntryType, amount: amt, paidBy: payer, members: included, receiver });
-            save();
-            document.getElementById("entryDesc").value = "";
-            document.getElementById("entryAmt").value = "";
-            alert("Saved!");
-            location.reload();
+            save(); alert("Saved!"); location.reload();
         }
 
         function calculateBalances() {
@@ -545,42 +594,46 @@
             records.forEach(r => {
                 if(r.type === 'expense') {
                     let share = r.members.length > 0 ? r.amount / r.members.length : 0;
-                    r.members.forEach(m => {
-                        if(stats.consumed[m] !== undefined) { stats.consumed[m] += share; stats.balance[m] -= share; }
-                    });
-                    if(r.paidBy === "Common") { stats.common -= r.amount; }
+                    r.members.forEach(m => { if(stats.consumed[m] !== undefined) { stats.consumed[m] += share; stats.balance[m] -= share; } });
+                    if(r.paidBy === "Common") stats.common -= r.amount;
                     else if(stats.paid[r.paidBy] !== undefined) { stats.paid[r.paidBy] += r.amount; stats.balance[r.paidBy] += r.amount; }
                 } else if(r.type === 'collection') {
-                    if(stats.paid[r.paidBy] !== undefined) { stats.paid[r.paidBy] += r.amount; stats.balance[r.paidBy] += r.amount; stats.collections[r.paidBy] += r.amount; }
+                    if(stats.paid[r.paidBy] !== undefined) { stats.paid[r.paidBy] += r.amount; stats.balance[r.paidBy] += r.amount; }
                     stats.common += r.amount;
                 } else if(r.type === 'settlement') {
                     if(stats.balance[r.paidBy] !== undefined) stats.balance[r.paidBy] += r.amount;
                     if(stats.balance[r.receiver] !== undefined) stats.balance[r.receiver] -= r.amount;
-                    if(stats.settlements[r.paidBy] !== undefined) stats.settlements[r.paidBy] += r.amount;
-                    if(stats.settlements[r.receiver] !== undefined) stats.settlements[r.receiver] -= r.amount;
                 }
             });
             return stats;
         }
 
+        function renderStatus() {
+            const data = calculateBalances();
+            document.getElementById("commonBalance").innerText = `Rs. ${data.common.toFixed(0)}`;
+            let html = "";
+            members.forEach(m => {
+                const bal = data.balance[m];
+                html += `<div class="balance-item"><span>${m}</span><span class="${bal>=0?'val-pos':'val-neg'}">Rs. ${bal.toFixed(0)}</span></div>`;
+            });
+            document.getElementById("statusDisplay").innerHTML = html;
+        }
+
         function renderAdminAudit() {
             const member = document.getElementById("adminAuditSelect").value || adminMember;
             const data = calculateBalances();
-            let memberRecs = records.filter(r => (r.members && r.members.includes(member)) || r.paidBy === member || r.receiver === member);
+            let memberRecs = getSortedRecordsNewestFirst().filter(r => (r.members && r.members.includes(member)) || r.paidBy === member || r.receiver === member);
 
             let html = `
                 <div class="balance-item"><span>Net Current Balance:</span><span class="${data.balance[member]>=0?'val-pos':'val-neg'}">Rs. ${data.balance[member].toFixed(0)}</span></div>
                 <div class="balance-item"><span>Total Consumption:</span><span>Rs. ${data.consumed[member].toFixed(0)}</span></div>
                 <div class="balance-item"><span>Total Paid/Contributed:</span><span>Rs. ${data.paid[member].toFixed(0)}</span></div>
-                <div class="balance-item"><span>Net Settlement Flow:</span><span>Rs. ${data.settlements[member].toFixed(0)}</span></div>
-                <h4 style="margin:10px 0 5px 0;">Itemized History (${memberRecs.length} entries):</h4>
-                <div style="max-height:140px; overflow-y:auto; border:1px solid var(--border-color); padding:5px; border-radius:6px; background:var(--card-bg);">`;
+                <h4 style="margin:10px 0 5px 0;">Itemized History (${memberRecs.length} entries - Newest First):</h4>
+                <div style="max-height:120px; overflow-y:auto; border:1px solid var(--border-color); padding:5px; border-radius:6px; background:var(--card-bg);">`;
 
-            memberRecs.slice().reverse().forEach(r => {
+            memberRecs.forEach(r => {
                 let share = r.type === 'expense' && r.members.includes(member) ? (r.amount / r.members.length).toFixed(0) : 0;
-                html += `<div style="font-size:10px; border-bottom:1px dashed var(--border-color); padding:3px 0; word-break:break-all;">
-                    <b>${r.date}</b> [${r.type.toUpperCase()}] ${r.desc} - Total: Rs ${r.amount} ${share > 0 ? `(Share: Rs ${share})` : ''}
-                </div>`;
+                html += `<div style="font-size:10px; border-bottom:1px dashed var(--border-color); padding:3px 0;"><b>${r.date}</b> [${r.type.toUpperCase()}] ${r.desc} - Rs ${r.amount} ${share > 0 ? `(Share: Rs ${share})` : ''}</div>`;
             });
 
             html += `</div>`;
@@ -590,10 +643,9 @@
         function renderRecords() {
             const query = (document.getElementById("recordSearchInput")?.value || "").toLowerCase().trim();
             let html = "";
-            records.slice().reverse().forEach(r => {
+            getSortedRecordsNewestFirst().forEach(r => {
                 let badge = '💸';
                 let targetMembers = r.members ? r.members.join(", ") : "-";
-
                 if(r.type === 'collection') badge = '💰';
                 else if(r.type === 'settlement') { badge = '🤝'; targetMembers = `To: ${r.receiver}`; }
 
@@ -637,48 +689,69 @@
         }
 
         function renderPerHeadGrid() {
-            let thead = `<tr><th>Item</th><th>Total</th>${members.map(m => `<th>${m}</th>`).join('')}</tr>`;
-            document.getElementById("perHeadHead").innerHTML = thead;
+            let topHeader = `<tr><th rowspan="2">Date</th><th rowspan="2">Description</th><th rowspan="2">Total Amount</th>`;
+            let subHeader = `<tr>`;
 
-            let tbody = "";
-            let memberTotals = {};
-            members.forEach(m => memberTotals[m] = 0);
+            members.forEach(m => {
+                topHeader += `<th colspan="2">${m}</th>`;
+                subHeader += `<th class="sub-header">Share</th><th class="sub-header">Remaining</th>`;
+            });
+            topHeader += `</tr>`;
+            subHeader += `</tr>`;
 
-            records.filter(r => r.type === 'expense').forEach(r => {
-                let share = r.members.length > 0 ? r.amount / r.members.length : 0;
-                tbody += `<tr><td style="text-align:left;">${r.desc}</td><td>${r.amount}</td>`;
+            document.getElementById("perHeadHead").innerHTML = topHeader + subHeader;
+
+            let runningBal = {};
+            members.forEach(m => runningBal[m] = 0);
+
+            let chronoRecords = getSortedRecordsChronological();
+            let perHeadRows = [];
+
+            chronoRecords.forEach(r => {
+                let share = (r.type === 'expense' && r.members.length > 0) ? (r.amount / r.members.length) : 0;
+                
                 members.forEach(m => {
-                    if(r.members.includes(m)) {
-                        memberTotals[m] += share;
-                        tbody += `<td>${share.toFixed(0)}</td>`;
-                    } else tbody += `<td>-</td>`;
+                    if(r.type === 'expense') {
+                        if(r.members.includes(m)) runningBal[m] -= share;
+                        if(r.paidBy === m) runningBal[m] += r.amount;
+                    } else if(r.type === 'collection') {
+                        if(r.paidBy === m) runningBal[m] += r.amount;
+                    } else if(r.type === 'settlement') {
+                        if(r.paidBy === m) runningBal[m] += r.amount;
+                        if(r.receiver === m) runningBal[m] -= r.amount;
+                    }
                 });
-                tbody += `</tr>`;
+
+                let rowHtml = `<tr>
+                    <td>${r.date.split('-').slice(1).join('/')}</td>
+                    <td style="text-align:left;">${r.desc}</td>
+                    <td><b>Rs ${r.amount}</b></td>`;
+
+                members.forEach(m => {
+                    let mShare = (r.type === 'expense' && r.members.includes(m)) ? share : 0;
+                    let balClass = runningBal[m] >= 0 ? 'val-pos' : 'val-neg';
+                    rowHtml += `<td>${mShare > 0 ? 'Rs ' + mShare.toFixed(0) : '-'}</td>`;
+                    rowHtml += `<td class="bal-cell ${balClass}">Rs ${runningBal[m].toFixed(0)}</td>`;
+                });
+
+                rowHtml += `</tr>`;
+                perHeadRows.push(rowHtml);
             });
 
-            tbody += `<tr style="font-weight:bold; background:rgba(52,152,219,0.1);"><td>Total</td><td>-</td>${members.map(m => `<td>${memberTotals[m].toFixed(0)}</td>`).join('')}</tr>`;
-            document.getElementById("perHeadBody").innerHTML = tbody;
+            // Reverse so newest transactions are displayed at top
+            document.getElementById("perHeadBody").innerHTML = perHeadRows.reverse().join("");
         }
 
         function renderAnalysis() {
-            const data = calculateBalances();
-            document.getElementById("commonBalance").innerText = `Rs. ${data.common.toFixed(0)}`;
-            let html = "";
-            members.forEach(m => {
-                const bal = data.balance[m];
-                html += `<div class="balance-item"><span>${m}</span><span class="${bal>=0?'val-pos':'val-neg'}">Rs. ${bal.toFixed(0)}</span></div>`;
-            });
-            document.getElementById("analysisDisplay").innerHTML = html;
-
             document.getElementById("adminAuditSelect").innerHTML = members.map(m => `<option value="${m}" ${m===adminMember?'selected':''}>${m}</option>`).join("");
             document.getElementById("adminBadge").innerText = `Admin: ${adminMember}`;
             renderAdminAudit();
-
             render14DayTrend();
             renderPerHeadGrid();
 
             const ctx = document.getElementById('expenseChart').getContext('2d');
             if(window.myChart) window.myChart.destroy();
+            const data = calculateBalances();
             window.myChart = new Chart(ctx, {
                 type: 'pie',
                 data: {
@@ -688,63 +761,42 @@
             });
         }
 
-        function toggleEditMemberMode() { isMemberEditMode = !isMemberEditMode; renderMemberList(); }
-
-        function renderMemberList() {
-            document.getElementById("manageMembersList").innerHTML = members.map(m => `
-                <div class="balance-item">
-                    <span>${m} [${messStatus[m]?'ON':'OFF'}]</span>
-                    <div>
-                        <button class="toggle-btn ${messStatus[m]?'status-on':'status-off'}" style="font-size:10px; padding:2px 5px;" onclick="toggleMess('${m}')">${messStatus[m]?'Turn Off':'Turn On'}</button>
-                        ${isMemberEditMode ? `
-                            <button class="btn-edit icon-btn" onclick="renameMember('${m}')">✏️</button>
-                            <button class="btn-danger icon-btn" onclick="deleteMember('${m}')">🪣</button>
-                        ` : ''}
-                    </div>
-                </div>`).join("");
-        }
-
-        function renameMember(oldName) {
-            const newName = prompt("New name for " + oldName, oldName);
-            if(newName && newName.trim() && !members.includes(newName.trim())) {
-                const idx = members.indexOf(oldName);
-                members[idx] = newName.trim();
-                messStatus[newName.trim()] = messStatus[oldName];
-                delete messStatus[oldName];
-                if(adminMember === oldName) adminMember = newName.trim();
-                save(); location.reload();
-            }
-        }
-
-        function openEditModal(id) {
+    function openEditModal(id) {
             activeEditId = id;
             let rec = records.find(r => r.id === id);
             if(!rec) return;
+
             document.getElementById("editDesc").value = rec.desc;
             document.getElementById("editAmt").value = rec.amount;
-            document.getElementById("editPayer").innerHTML = `<option value="Common">Common Fund Account</option>` + members.map(m => `<option value="${m}">${m}</option>`).join("");
-            document.getElementById("editPayer").value = rec.paidBy;
+            setEditType(rec.type || 'expense');
+
+            if(rec.paidBy) document.getElementById("editPayer").value = rec.paidBy;
+            if(rec.receiver) document.getElementById("editReceiver").value = rec.receiver;
+
             document.getElementById("editMemberChecks").innerHTML = members.map(m => `
                 <label><input type="checkbox" value="${m}" ${rec.members && rec.members.includes(m)?'checked':''}> ${m}</label>`).join("");
             document.getElementById("editModal").style.display = "flex";
         }
 
         function closeModal() { document.getElementById("editModal").style.display = "none"; }
-        function openSettingsModal() { 
-            renderMemberList();
-            document.getElementById("themeSelect").value = currentTheme;
-            document.getElementById("adminMemberSelect").innerHTML = members.map(m => `<option value="${m}" ${m===adminMember?'selected':''}>${m}</option>`).join("");
-            document.getElementById("settingsModal").style.display = "flex"; 
-        }
-        function closeSettingsModal() { document.getElementById("settingsModal").style.display = "none"; }
 
         function saveEdits() {
             let rec = records.find(r => r.id === activeEditId);
             if(rec) {
                 rec.desc = document.getElementById("editDesc").value;
                 rec.amount = Number(document.getElementById("editAmt").value);
+                rec.type = currentEditType;
                 rec.paidBy = document.getElementById("editPayer").value;
-                rec.members = [...document.querySelectorAll("#editMemberChecks input:checked")].map(i => i.value);
+                if(currentEditType === 'expense') {
+                    rec.members = [...document.querySelectorAll("#editMemberChecks input:checked")].map(i => i.value);
+                    rec.receiver = null;
+                } else if(currentEditType === 'settlement') {
+                    rec.receiver = document.getElementById("editReceiver").value;
+                    rec.members = [];
+                } else {
+                    rec.members = [];
+                    rec.receiver = null;
+                }
                 save(); location.reload();
             }
         }
@@ -756,7 +808,21 @@
             document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
             document.getElementById(id).style.display = "block";
             if(el) el.classList.add("active");
+            if(id === 'statusPage') renderStatus();
             if(id === 'userPage') renderAnalysis();
+        }
+
+        function toggleEditMemberMode() { isMemberEditMode = !isMemberEditMode; renderMemberList(); }
+
+        function renderMemberList() {
+            document.getElementById("manageMembersList").innerHTML = members.map(m => `
+                <div class="balance-item">
+                    <span>${m} [${messStatus[m]?'ON':'OFF'}]</span>
+                    <div>
+                        <button class="toggle-btn ${messStatus[m]?'status-on':'status-off'}" style="font-size:10px; padding:2px 5px;" onclick="toggleMess('${m}')">${messStatus[m]?'Turn Off':'Turn On'}</button>
+                        ${isMemberEditMode ? `<button class="btn-danger icon-btn" onclick="deleteMember('${m}')">🪣</button>` : ''}
+                    </div>
+                </div>`).join("");
         }
 
         function init() {
@@ -787,56 +853,21 @@
             const todayRecs = records.filter(r => r.date === today);
             const data = calculateBalances();
             let text = `📋 HOSTEL REPORT: ${today}\n\n`;
-
-            const expenses = todayRecs.filter(r => r.type === 'expense');
-            if(expenses.length > 0){
-                text += `🔹 EXPENSES:\n`;
-                expenses.forEach(r => { text += `• ${r.desc} - Rs ${r.amount} (Paid: ${r.paidBy})\n`; });
-                text += `\n`;
-            }
-
-            text += `📊 NET BALANCE SUMMARY:\n`;
+            todayRecs.filter(r => r.type === 'expense').forEach(r => { text += `• ${r.desc} - Rs ${r.amount} (Paid: ${r.paidBy})\n`; });
+            text += `\n📊 NET BALANCE:\n`;
             members.forEach(m => { text += `• ${m}: Rs ${data.balance[m].toFixed(0)}\n`; });
             text += `\n🏦 Common Fund: Rs ${data.common.toFixed(0)}`;
 
             if (navigator.share) navigator.share({ text });
-            else { navigator.clipboard.writeText(text); alert("Copied to clipboard!"); }
+            else { navigator.clipboard.writeText(text); alert("Copied!"); }
         }
 
         function shareIndividual() {
             const name = document.getElementById("shareMemberSelect").value;
-            const start = document.getElementById("shareStartDate").value;
-            const end = document.getElementById("shareEndDate").value;
             const data = calculateBalances();
-
-            let memberRecs = records.filter(r => (r.members && r.members.includes(name)) || r.paidBy === name || r.receiver === name);
-
-            if(start) memberRecs = memberRecs.filter(r => r.date >= start);
-            if(end) memberRecs = memberRecs.filter(r => r.date <= end);
-
-            let text = `👤 STATEMENT FOR: ${name}\n`;
-            text += `📅 Timeline: ${start || 'Beginning'} to ${end || 'Present'}\n------------------------------------\n`;
-
-            let netShareConsumed = 0;
-            memberRecs.forEach(r => {
-                if(r.type === 'expense' && r.members.includes(name)) {
-                    let share = r.amount / r.members.length;
-                    netShareConsumed += share;
-                    text += `• ${r.date}: ${r.desc} (Share: Rs ${share.toFixed(0)})\n`;
-                } else if(r.type === 'collection' && r.paidBy === name) {
-                    text += `• ${r.date}: 💰 Collection (Rs ${r.amount})\n`;
-                } else if(r.type === 'settlement') {
-                    if(r.paidBy === name) text += `• ${r.date}: 🤝 Paid To ${r.receiver} (Rs ${r.amount})\n`;
-                    if(r.receiver === name) text += `• ${r.date}: 🤝 Recv From ${r.paidBy} (Rs ${r.amount})\n`;
-                }
-            });
-
-            text += `------------------------------------\n`;
-            text += `📊 Timeline Consumption: Rs ${netShareConsumed.toFixed(0)}\n`;
-            text += `💰 Net Balance: Rs ${data.balance[name].toFixed(0)}\n`;
-
+            let text = `👤 STATEMENT FOR: ${name}\n💰 Balance: Rs ${data.balance[name].toFixed(0)}`;
             if (navigator.share) navigator.share({ text });
-            else { navigator.clipboard.writeText(text); alert("Statement copied!"); }
+            else { navigator.clipboard.writeText(text); alert("Copied!"); }
         }
 
         init();
