@@ -187,7 +187,6 @@
 
         .modal-overlay { display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(15, 23, 42, 0.6); justify-content:flex-end; align-items:stretch; z-index:1000; backdrop-filter: blur(2px); }
         
-        /* Fixed Issue #3: Reduced Settings panel width to 35% */
         .modal-content-side {
             background: var(--card-bg); padding: 18px;
             width: 35vw; min-width: 280px; max-width: 350px; height: 100vh;
@@ -202,7 +201,6 @@
             margin-top: 6px;
         }
         
-        /* Fixed Issue #2: Names aligned on left, toggle/checkboxes on right */
         .member-check-box {
             background: var(--bg);
             border: 1px solid var(--border-color);
@@ -247,7 +245,6 @@
         .corner-remaining-bal { position: absolute; right: 8px; bottom: 6px; font-size: 10px; font-weight: bold; padding: 2px 5px; border-radius: 4px; }
         .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
         
-        /* Fixed Issue #4: Controls wrapping for analysis date selection */
         .analysis-controls-flex {
             display: flex;
             gap: 6px;
@@ -773,7 +770,6 @@
             renderMemberChecks('entryMemberChecks');
         }
 
-        /* Fixed Issue #1: Correctly populates Payer and Receiver dropdown options in Edit Modal */
         function setEditType(type) {
             currentEditType = type;
             document.getElementById("btnEditExp").className = "type-btn " + (type === 'expense' ? 'active-exp' : '');
@@ -1217,7 +1213,6 @@
             });
         }
 
-        /* Fixed Issue #1: Correctly restores dropdown selections for Settlements in Edit Modal */
         function openEditModal(id) {
             activeEditId = id;
             let rec = records.find(r => r.id === id);
@@ -1227,7 +1222,6 @@
             document.getElementById("editAmt").value = rec.amount;
             document.getElementById("editDate").value = rec.date;
             
-            // Populates dropdowns first
             setEditType(rec.type || 'expense');
 
             if(rec.paidBy) document.getElementById("editPayer").value = rec.paidBy;
