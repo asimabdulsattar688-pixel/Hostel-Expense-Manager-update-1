@@ -1,0 +1,1300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Hostel Expenses Manager by ASIM SHAHZAD v22.0</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --sidebar-w: 68px;
+            --primary: #4c1d95;
+            --accent: #8b5cf6;
+            --accent-hover: #7c3aed;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --bg: #f3e8ff;
+            --card-bg: #ffffff;
+            --text-color: #2e1065;
+            --border-color: #ddd6fe;
+        }
+
+        body.theme-dark {
+            --bg: #0f172a;
+            --card-bg: #1e1b4b;
+            --text-color: #f3e8ff;
+            --border-color: #3730a3;
+            --primary: #5b21b6;
+        }
+
+        body.theme-midnight {
+            --bg: #090514;
+            --card-bg: #130a2a;
+            --text-color: #e9d5ff;
+            --border-color: #2e1065;
+            --primary: #2e1065;
+            --accent: #a855f7;
+        }
+
+        body.theme-forest {
+            --bg: #ecfdf5;
+            --card-bg: #ffffff;
+            --text-color: #065f46;
+            --border-color: #a7f3d0;
+            --primary: #047857;
+            --accent: #059669;
+        }
+
+        body.theme-sunset {
+            --bg: #fffbeb;
+            --card-bg: #ffffff;
+            --text-color: #9a3412;
+            --border-color: #fed7aa;
+            --primary: #c2410c;
+            --accent: #ea580c;
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 100vw;
+            background: var(--bg);
+            color: var(--text-color);
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        body.has-custom-bg::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(243, 232, 255, 0.75);
+            z-index: -1;
+            pointer-events: none;
+        }
+        body.theme-dark.has-custom-bg::before, body.theme-midnight.has-custom-bg::before {
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        .top-navbar {
+            height: 52px;
+            background: linear-gradient(135deg, #4c1d95, #6d28d9);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(76, 29, 149, 0.25);
+            z-index: 10;
+        }
+        .top-navbar .brand { font-weight: 700; font-size: 13px; letter-spacing: 0.5px; text-align: center; flex: 1; margin: 0 10px; word-break: break-word; }
+        .top-navbar .menu-btn { font-size: 24px; cursor: pointer; background: none; border: none; color: white; padding: 0; width: auto; margin: 0; }
+
+        .app-container { display: flex; flex-grow: 1; height: calc(100vh - 52px); overflow: hidden; }
+
+        .sidebar {
+            width: var(--sidebar-w);
+            background: linear-gradient(180deg, #3b0764, #4c1d95);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 12px;
+            flex-shrink: 0;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+        .nav-item {
+            width: 100%;
+            padding: 12px 2px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 11px;
+            color: #d8b4fe;
+            border-left: 3px solid transparent;
+            transition: all 0.2s ease;
+        }
+        .nav-item:hover { color: #ffffff; background: rgba(255,255,255,0.08); }
+        .nav-item.active { background: rgba(255,255,255,0.15); color: white; border-left-color: #c084fc; font-weight: bold; }
+        .nav-item i { display: block; font-size: 18px; margin-bottom: 2px; }
+
+        .main-content { flex-grow: 1; height: 100%; overflow-y: auto; padding: 14px; }
+        .page { display: none; max-width: 900px; margin: 0 auto; animation: fadeIn 0.2s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+        .card {
+            background: var(--card-bg);
+            padding: 16px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.08);
+            margin-bottom: 14px;
+            border: 1px solid var(--border-color);
+            width: 100%;
+        }
+
+        h2, h3, h4 { margin-top: 0; color: var(--text-color); }
+        input, select, button, textarea {
+            width: 100%;
+            padding: 9px 12px;
+            margin: 4px 0;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+            color: var(--text-color);
+            font-size: 13px;
+            outline: none;
+            transition: border 0.2s ease;
+        }
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
+        }
+        button { background: var(--accent); color: white; border: none; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+        button:hover { background: var(--accent-hover); }
+        .btn-danger { background: var(--danger); }
+        .btn-success { background: var(--success); }
+        .btn-warning { background: var(--warning); }
+        .btn-edit { background: #7c3aed; }
+        .icon-btn { width: auto; padding: 5px 10px; font-size: 12px; display: inline-block; border-radius: 6px; }
+
+        .type-selector { display: flex; gap: 8px; margin-bottom: 12px; width: 100%; }
+        .type-btn {
+            flex: 1; padding: 10px 2px; font-size: 12px;
+            border: 1px solid var(--border-color); background: var(--bg); color: var(--text-color);
+            cursor: pointer; border-radius: 8px; font-weight: bold; text-align: center;
+        }
+        .type-btn.active-exp { background: var(--danger); color: white; border-color: var(--danger); }
+        .type-btn.active-col { background: var(--success); color: white; border-color: var(--success); }
+
+        .balance-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 4px; border-bottom: 1px solid var(--border-color); }
+        .val-pos { color: var(--success); font-weight: bold; }
+        .val-neg { color: var(--danger); font-weight: bold; }
+        .account-card { background: linear-gradient(135deg, #5b21b6, #7c3aed); color: white; padding: 18px; border-radius: 12px; text-align: center; margin-bottom: 14px; box-shadow: 0 4px 12px rgba(91, 33, 182, 0.3); }
+
+        .table-wrapper { width: 100%; overflow-x: auto; border: 1px solid var(--border-color); border-radius: 8px; }
+        table { width: 100%; border-collapse: collapse; font-size: 11px; min-width: 450px; }
+        th, td { padding: 8px 10px; text-align: center; border-bottom: 1px solid var(--border-color); border-right: 1px solid var(--border-color); white-space: nowrap; }
+        th { background: rgba(139, 92, 246, 0.08); font-size: 11px; font-weight: 700; color: var(--primary); }
+        label.section-label { font-size: 11px; font-weight: bold; color: #6b21a8; display: block; margin-top: 8px; }
+
+        .modal-overlay { display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(15, 23, 42, 0.6); justify-content:flex-end; align-items:stretch; z-index:1000; backdrop-filter: blur(2px); }
+        .modal-content-side {
+            background: var(--card-bg); padding: 18px;
+            width: 88%; max-width: 380px; height: 100vh;
+            overflow-y: auto; border-left: 4px solid var(--accent); box-shadow: -5px 0 25px rgba(0,0,0,0.3);
+        }
+        .modal-content { background:var(--card-bg); padding:18px; border-radius:12px; width:92%; max-width:450px; max-height: 85vh; overflow-y: auto; margin: auto; }
+
+        .member-grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 8px;
+            margin-top: 6px;
+        }
+        .member-check-box {
+            background: var(--bg);
+            border: 1px solid var(--border-color);
+            padding: 8px 10px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .member-check-box label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            cursor: pointer;
+            width: 100%;
+            margin: 0;
+        }
+        .custom-share-input {
+            width: 60px;
+            padding: 3px 4px;
+            font-size: 11px;
+            margin-left: 4px;
+            display: inline-block;
+        }
+
+        .analysis-entry-box {
+            position: relative;
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--card-bg);
+            margin-bottom: 6px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+        }
+        .large-central-expense { font-size: 16px; font-weight: bold; text-align: center; margin: 4px 0; }
+        .corner-remaining-bal { position: absolute; right: 8px; bottom: 6px; font-size: 10px; font-weight: bold; padding: 2px 5px; border-radius: 4px; }
+        .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .tag-badge { font-size: 9px; padding: 2px 6px; border-radius: 4px; background: #f3e8ff; color: #6b21a8; font-weight: bold; }
+
+        .audit-controls-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            align-items: center;
+            justify-content: center;
+            margin-top: 8px;
+            background: var(--bg);
+            padding: 8px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+        }
+
+        .audit-select-bar {
+            flex: 1;
+            min-width: 110px;
+            padding: 5px 8px;
+            font-size: 13px;
+            font-weight: 700;
+            border: 1px solid var(--accent);
+            border-radius: 6px;
+            background: var(--card-bg);
+            color: var(--primary);
+            cursor: pointer;
+        }
+
+        .audit-date-input {
+            width: 110px !important;
+            padding: 4px 6px !important;
+            font-size: 10px !important;
+            margin: 0 !important;
+        }
+
+        .share-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+        @media (min-width: 600px) {
+            .share-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-navbar">
+        <button class="menu-btn" style="visibility: hidden;">☰</button>
+        <span class="brand">Hostel Expenses Manager by ASIM SHAHZAD v22.0</span>
+        <button class="menu-btn" id="threeLineMenuBtn" onclick="toggleSettingsModal()" title="Open App Settings & Preferences">☰</button>
+    </div>
+
+    <div class="app-container">
+        <div class="sidebar">
+            <div class="nav-item active" onclick="showPage('entryPage', this)" title="Add New Expense or Settlement Entry"><i>📝</i>Entry</div>
+            <div class="nav-item" onclick="showPage('recordsPage', this)" title="View Current Month Transactions"><i>📜</i>Records</div>
+            <div class="nav-item" onclick="showPage('statusPage', this)" title="View Overall Balances & Fund"><i>💵</i>Status</div>
+            <div class="nav-item" onclick="showPage('userPage', this)" title="Analyze All-Time Share & Individual History"><i>📊</i>Analysis</div>
+            <div class="nav-item" onclick="showPage('sharePage', this)" title="Share Summary Report or App Link"><i>🔗</i>Share</div>
+        </div>
+
+        <div class="main-content">
+            <!-- ENTRY PAGE -->
+            <div id="entryPage" class="page" style="display:block">
+                <h3>📝 New Transaction Entry</h3>
+                <div class="card">
+                    <label class="section-label">Select Transaction Type:</label>
+                    <div class="type-selector">
+                        <button type="button" class="type-btn active-exp" id="btnTypeExp" onclick="setEntryType('expense')" title="Switch to Expense Mode">💸 EXPENSE</button>
+                        <button type="button" class="type-btn" id="btnTypeCol" onclick="setEntryType('collection_settlement')" title="Switch to Settlement Mode">💰 SETTLEMENT</button>
+                    </div>
+
+                    <label class="section-label">Description / Item Note:</label>
+                    <input id="entryDesc" list="categoryDatalist" placeholder="Type or select description (e.g. Eggs, Mess, Rent)" title="Type custom note or select from categories">
+                    <datalist id="categoryDatalist"></datalist>
+                    
+                    <label class="section-label">Amount (Rs.):</label>
+                    <div style="display:flex; gap:6px; align-items:center;">
+                        <input id="entryAmt" placeholder="Enter amount or formula (e.g. 250+100)" title="Enter amount. Press '+' button to sum values" onblur="evaluateAmountInput('entryAmt')" onkeydown="if(event.key==='Enter') evaluateAmountInput('entryAmt')">
+                        <button type="button" class="icon-btn" style="height:37px; background:var(--warning);" onclick="appendPlus('entryAmt')" title="Click to add '+'">+</button>
+                    </div>
+
+                    <label class="section-label">Date:</label>
+                    <input id="entryDate" type="date" title="Select entry date">
+
+                    <div id="fieldPayer" class="dynamic-field" style="display:block">
+                        <label class="section-label" id="payerLabel">Paid / Submitted By:</label>
+                        <select id="entryPayer" title="Select member who paid"></select>
+                    </div>
+
+                    <div id="fieldReceiver" class="dynamic-field">
+                        <label class="section-label">Paid To (Receiver):</label>
+                        <select id="entryReceiver" title="Select receiver member or Common Account"></select>
+                    </div>
+
+                    <div id="fieldMembers" class="dynamic-field" style="display:block">
+                        <label class="section-label">Included Members:</label>
+                        <div id="entryMemberChecks" class="member-grid-container"></div>
+                    </div>
+
+                    <button id="submitEntryBtn" class="btn-danger" style="margin-top:15px;" onclick="submitUnifiedEntry()" title="Click to save transaction">Save Record</button>
+                </div>
+            </div>
+
+            <!-- RECORDS PAGE -->
+            <div id="recordsPage" class="page">
+                <div class="header-flex">
+                    <h2>Financial Records <span style="font-size:12px; font-weight:normal; opacity:0.8;">(Current Month)</span></h2>
+                    <button class="icon-btn btn-success" onclick="exportToCSV()" title="Download current month table in Excel CSV format">📥 Export CSV</button>
+                </div>
+
+                <div class="card">
+                    <input id="recordSearchInput" placeholder="🔍 Search Description or Name..." onkeyup="renderRecords()" title="Filter active month transactions">
+                </div>
+                
+                <div class="header-flex" style="padding: 0 4px;">
+                    <label class="section-label" style="margin:0;">Active Month Table (Newest First)</label>
+                    <button class="icon-btn" id="recordEditToggleBtn" onclick="toggleRecordEditMode()" style="background:none; border:none; font-size:18px;" title="Enable/Disable table edit actions">✏️ Actions</button>
+                </div>
+
+                <div class="card table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width:80px;" title="Transaction Month & Date">Month / Date</th>
+                                <th title="Transaction Type Badge">Type</th>
+                                <th title="Description or Note">Item</th>
+                                <th title="Total Amount">Total</th>
+                                <th title="Payer Member">By</th>
+                                <th title="Target Members / Receivers">Members / Target</th>
+                                <th id="thActions" style="display:none;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recordsBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- CURRENT STATUS TAB -->
+            <div id="statusPage" class="page">
+                <h2>💵 Current Account Status</h2>
+                <div class="account-card" title="Total accumulated balance in Common Hostel Fund">
+                    <div style="font-size: 12px; opacity: 0.9;">Common Account Balance</div>
+                    <div id="commonBalance" style="font-size: 28px; font-weight: bold;">Rs. 0</div>
+                </div>
+
+                <div class="card">
+                    <h3>⚖️ Net Account Balance Summary</h3>
+                    <div id="statusDisplay"></div>
+                </div>
+            </div>
+
+            <!-- ANALYSIS TAB -->
+            <div id="userPage" class="page">
+                <h2>📊 Financial Analysis</h2>
+
+                <div class="card" id="cardPieChart" style="margin-bottom: 14px;">
+                    <div class="header-flex">
+                        <h3 style="margin:0;">Consumption Share</h3>
+                        <div style="display:flex; gap:5px;">
+                            <select id="pieTimeframe" onchange="renderAnalysis()" style="width:95px; padding:4px; font-size:11px;" title="Select analysis timeframe">
+                                <option value="monthly">Monthly</option>
+                                <option value="weekly">Weekly</option>
+                                <option value="daily">Daily</option>
+                                <option value="all">All Time</option>
+                            </select>
+                            <input type="month" id="pieMonthPicker" onchange="renderAnalysis()" style="width:120px; padding:3px; font-size:11px;" title="Filter historical analysis by month">
+                        </div>
+                    </div>
+                    <div style="max-width:320px; margin:0 auto;">
+                        <canvas id="expenseChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card" id="cardAdminAudit">
+                    <h3 style="margin:0; text-align:center;">Member History Audit</h3>
+                    
+                    <div class="audit-controls-row">
+                        <select id="adminAuditSelect" class="audit-select-bar" onchange="renderAdminAudit()" title="Select Member"></select>
+                        <div style="display:flex; align-items:center; gap:3px;">
+                            <span style="font-size:10px; font-weight:bold;">From:</span>
+                            <input type="date" id="auditFromDate" class="audit-date-input" onchange="renderAdminAudit()">
+                        </div>
+                        <div style="display:flex; align-items:center; gap:3px;">
+                            <span style="font-size:10px; font-weight:bold;">To:</span>
+                            <input type="date" id="auditToDate" class="audit-date-input" onchange="renderAdminAudit()">
+                        </div>
+                        <button class="icon-btn btn-success" style="padding: 5px 8px;" onclick="shareMemberAuditHistory()" title="Share filtered member history report">Share 📲</button>
+                    </div>
+
+                    <div id="adminAuditDisplay" style="margin-top:10px;"></div>
+                </div>
+            </div>
+
+            <!-- CUSTOMIZED SHARE TAB -->
+            <div id="sharePage" class="page">
+                <div class="share-grid">
+                    <div class="card">
+                        <h3>📋 Share Today's Expenses</h3>
+                        <textarea id="summaryNote" rows="2" placeholder="Add custom note here..." style="font-size:11px;" title="Optional note appended to image report"></textarea>
+                        <button class="btn-success" onclick="shareSummaryImage()" style="margin-top:8px; padding:10px;" title="Generate and share image report">📲 Share Today's Summary</button>
+                        <div style="text-align: center; margin-top: 8px;">
+                            <a href="#" onclick="regenerateLastSummary(); return false;" style="font-size: 11px; text-decoration: underline; color: var(--accent);">🔄 Regenerate Last Summary</a>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>🔗 Share The App</h3>
+                        <textarea id="appNote" rows="2" placeholder="Add custom app invite message..." style="font-size:11px;" title="Optional text sent alongside app link"></textarea>
+                        <button class="btn-warning" onclick="shareAppDirect()" style="margin-top:8px; padding:10px;" title="Copy or share application link">🔗 Share App Link</button>
+                    </div>
+                </div>
+
+                <div id="hiddenReportCanvas" style="position:fixed; left:-9999px; top:-9999px; width:450px; background:#ffffff; padding:20px; border-radius:0; color:#0f172a; font-family:sans-serif; visibility:visible;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SETTINGS PANEL -->
+    <div id="settingsModal" class="modal-overlay" onclick="handleModalBgClick(event)">
+        <div class="modal-content-side">
+            <div class="header-flex">
+                <h3 style="margin:0;">⚙️ Settings</h3>
+                <span style="font-size:12px; color:#6b21a8; opacity:0.8;">Preferences</span>
+            </div>
+
+            <div class="card">
+                <div class="header-flex">
+                    <h3 style="margin:0;">Manage Members</h3>
+                    <button class="icon-btn" onclick="toggleEditMemberMode()" style="background:none; border:none; font-size:18px;" title="Enable or disable editing for members and categories">✏️ Actions</button>
+                </div>
+                <div id="manageMembersList"></div>
+                <div id="addMemberControls" style="display:none; gap:5px; margin-top:10px;">
+                    <input id="newMemberName" placeholder="New Member Name" title="Enter new member name">
+                    <button style="width:75px" onclick="addMember()" title="Add member">Add</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Edit & Add Description Entries</h3>
+                <div id="categoriesListDisplay"></div>
+                <div id="addCatControls" style="display:none; gap:4px; margin-top:8px;">
+                    <input id="newCatInput" placeholder="New Category (e.g. Eggs)" title="Type new category entry">
+                    <button style="width:75px" onclick="addCategory()" title="Add category entry">Add</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Theme Customizer</h3>
+                <select id="themeSelect" onchange="changeTheme(this.value)" title="Choose color theme">
+                    <option value="light">Light Purple</option>
+                    <option value="dark">Dark Slate</option>
+                    <option value="midnight">Midnight Purple</option>
+                    <option value="forest">Forest Green</option>
+                    <option value="sunset">Sunset Orange</option>
+                </select>
+
+                <label class="section-label">Select Background Image (Gallery):</label>
+                <input type="file" id="bgImageInput" accept="image/*" onchange="handleBackgroundUpload(this)" title="Choose a custom background image from gallery">
+                <button class="btn-danger" onclick="clearBackgroundImage()" style="margin-top:6px; font-size:11px; padding:6px;">🗑️ Clear Background Image</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="editModal" class="modal-overlay" onclick="handleEditModalBgClick(event)">
+        <div class="modal-content">
+            <h3>✏️ Edit Record</h3>
+            
+            <label class="section-label">Transaction Type:</label>
+            <div class="type-selector">
+                <button type="button" class="type-btn" id="btnEditExp" onclick="setEditType('expense')">💸 EXPENSE</button>
+                <button type="button" class="type-btn" id="btnEditCol" onclick="setEditType('collection_settlement')">💰 SETTLEMENT</button>
+            </div>
+
+            <label class="section-label">Date:</label>
+            <input id="editDate" type="date" title="Update transaction date">
+
+            <label class="section-label">Description:</label>
+            <input id="editDesc" placeholder="Description">
+
+            <label class="section-label">Amount (Rs.):</label>
+            <input id="editAmt" placeholder="Amount" onblur="evaluateAmountInput('editAmt')">
+            
+            <div id="editFieldPayer" class="dynamic-field">
+                <label class="section-label" id="editPayerLabel">Paid / Submitted By:</label>
+                <select id="editPayer"></select>
+            </div>
+
+            <div id="editFieldReceiver" class="dynamic-field">
+                <label class="section-label">Paid To (Receiver):</label>
+                <select id="editReceiver"></select>
+            </div>
+
+            <div id="editFieldMembers" class="dynamic-field">
+                <label class="section-label">Included Members:</label>
+                <div id="editMemberChecks" class="member-grid-container"></div>
+            </div>
+
+            <button class="btn-success" style="margin-top:15px;" onclick="saveEdits()">Save Updates</button>
+            <button class="btn-danger" style="background:#7f8c8d; margin-top:5px;" onclick="closeModal()">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        let members = JSON.parse(localStorage.getItem("members") || '["Ali", "Asghar"]');
+        let messStatus = JSON.parse(localStorage.getItem("messStatus") || '{}');
+        let categories = JSON.parse(localStorage.getItem("categories") || '["Mess/Food", "Rent", "Utilities", "Groceries", "General", "Eggs"]');
+        let records = JSON.parse(localStorage.getItem("records") || "[]");
+        let lastSharedTimestamp = localStorage.getItem("lastSharedTimestamp") || "0";
+        let lastGeneratedHTML = localStorage.getItem("lastGeneratedHTML") || "";
+        let currentTheme = localStorage.getItem("currentTheme") || "light";
+        let customBgImage = localStorage.getItem("customBgImage") || null;
+        let adminMember = members[0];
+
+        let currentEntryType = 'expense';
+        let currentEditType = 'expense';
+        let activeEditId = null;
+        let isSettingsEditMode = false;
+        let isRecordEditMode = false;
+        let isSettingsOpen = false;
+
+        members.forEach(m => { if(messStatus[m] === undefined) messStatus[m] = true; });
+
+        function save() {
+            localStorage.setItem("records", JSON.stringify(records));
+            localStorage.setItem("members", JSON.stringify(members));
+            localStorage.setItem("messStatus", JSON.stringify(messStatus));
+            localStorage.setItem("categories", JSON.stringify(categories));
+            localStorage.setItem("currentTheme", currentTheme);
+            localStorage.setItem("customBgImage", customBgImage || "");
+            localStorage.setItem("lastSharedTimestamp", lastSharedTimestamp);
+            localStorage.setItem("lastGeneratedHTML", lastGeneratedHTML);
+        }
+
+        function populateCategoriesDatalist() {
+            const datalist = document.getElementById("categoryDatalist");
+            datalist.innerHTML = categories.map(c => `<option value="${c}">`).join("");
+            
+            const catDisplay = document.getElementById("categoriesListDisplay");
+            catDisplay.innerHTML = categories.map((c, idx) => `
+                <div class="balance-item" style="padding:4px 0;">
+                    <span>${c}</span>
+                    ${isSettingsEditMode ? `<button class="btn-danger icon-btn" onclick="deleteCategory(${idx})" style="padding:1px 5px; font-size:10px;" title="Delete category entry">🗑️</button>` : ''}
+                </div>
+            `).join("");
+        }
+
+        function addCategory() {
+            const val = document.getElementById("newCatInput").value.trim();
+            if(val && !categories.includes(val)) {
+                categories.push(val);
+                save(); populateCategoriesDatalist();
+                document.getElementById("newCatInput").value = "";
+            }
+        }
+
+        function deleteCategory(idx) {
+            if(categories.length <= 1) return alert("Keep at least one category.");
+            categories.splice(idx, 1);
+            save(); populateCategoriesDatalist();
+        }
+
+        function appendPlus(fieldId) {
+            const input = document.getElementById(fieldId);
+            if(input.value && !input.value.endsWith('+')) input.value += '+';
+            input.focus();
+        }
+
+        function evaluateAmountInput(fieldId) {
+            const input = document.getElementById(fieldId);
+            if(!input.value) return;
+            try {
+                let expr = input.value.replace(/[^0-9+\-*/.]/g, '');
+                if(expr) {
+                    let result = Function(`'use strict'; return (${expr})`)();
+                    if(!isNaN(result)) input.value = result;
+                }
+            } catch(e) {}
+        }
+
+        function exportToCSV() {
+            let csv = "Date,Type,Description,Amount,PaidBy,Target\n";
+            let activeMonthRecs = getActiveMonthRecords();
+            activeMonthRecs.forEach(r => {
+                let targetMembersArr = [];
+                let customSum = r.customShares ? Object.values(r.customShares).reduce((a, b) => a + Number(b), 0) : 0;
+                let defaultShare = (r.type === 'expense' && r.members && r.members.length > 0) ? ((r.amount - customSum) / r.members.length) : 0;
+
+                if(r.type === 'expense') {
+                    if(r.members) {
+                        r.members.forEach(m => targetMembersArr.push(`${m}(Rs.${defaultShare.toFixed(0)})`));
+                    }
+                    if(r.customShares) {
+                        Object.keys(r.customShares).forEach(m => targetMembersArr.push(`${m}(Rs.${r.customShares[m]})`));
+                    }
+                }
+
+                let target = r.receiver ? r.receiver : (targetMembersArr.join(";") || "");
+                csv += `${r.date},${r.type},"${r.desc.replace(/"/g, '""')}",${r.amount},${r.paidBy},"${target}"\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.setAttribute("download", `Hostel_Expenses_${new Date().toISOString().slice(0,10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function getSortedRecordsNewestFirst() { return records.slice().sort((a, b) => new Date(b.date) - new Date(a.date) || Number(b.id) - Number(a.id)); }
+        function getSortedRecordsChronological() { return records.slice().sort((a, b) => new Date(a.date) - new Date(b.date) || Number(a.id) - Number(a.id)); }
+
+        function getActiveMonthRecords() {
+            const currentMonthStr = new Date().toISOString().slice(0, 7);
+            return getSortedRecordsNewestFirst().filter(r => r.date.startsWith(currentMonthStr));
+        }
+
+        function applyThemeAndBg() {
+            document.body.className = "theme-" + currentTheme;
+            if (customBgImage) {
+                document.body.style.backgroundImage = `url('${customBgImage}')`;
+                document.body.classList.add('has-custom-bg');
+            } else {
+                document.body.style.backgroundImage = "none";
+                document.body.classList.remove('has-custom-bg');
+            }
+        }
+
+        function changeTheme(val) { currentTheme = val; save(); applyThemeAndBg(); }
+
+        function handleBackgroundUpload(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    customBgImage = e.target.result;
+                    save();
+                    applyThemeAndBg();
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function clearBackgroundImage() {
+            customBgImage = null;
+            save();
+            applyThemeAndBg();
+        }
+
+        function handleModalBgClick(e) { if(e.target.id === "settingsModal") toggleSettingsModal(); }
+        function handleEditModalBgClick(e) { if(e.target.id === "editModal") closeModal(); }
+
+        function toggleSettingsModal() {
+            isSettingsOpen = !isSettingsOpen;
+            document.getElementById("threeLineMenuBtn").innerText = isSettingsOpen ? "✕" : "☰";
+            if(isSettingsOpen) {
+                renderMemberList();
+                populateCategoriesDatalist();
+                document.getElementById("themeSelect").value = currentTheme;
+                document.getElementById("settingsModal").style.display = "flex";
+            } else {
+                document.getElementById("settingsModal").style.display = "none";
+                disableAllEditModes();
+            }
+        }
+
+        function disableAllEditModes() {
+            isRecordEditMode = false;
+            isSettingsEditMode = false;
+            document.getElementById("thActions").style.display = "none";
+            document.getElementById("addMemberControls").style.display = "none";
+            document.getElementById("addCatControls").style.display = "none";
+            renderRecords();
+            renderMemberList();
+            populateCategoriesDatalist();
+        }
+
+        function toggleRecordEditMode() {
+            isRecordEditMode = !isRecordEditMode;
+            document.getElementById("thActions").style.display = isRecordEditMode ? "table-cell" : "none";
+            renderRecords();
+        }
+
+        function setEntryType(type) {
+            currentEntryType = type;
+            document.getElementById("btnTypeExp").className = "type-btn " + (type === 'expense' ? 'active-exp' : '');
+            document.getElementById("btnTypeCol").className = "type-btn " + (type === 'collection_settlement' ? 'active-col' : '');
+
+            const mOptions = members.map(m => `<option value="${m}">${m}</option>`).join("");
+            const commonOption = `<option value="Common">Common Fund Account</option>`;
+
+            if(type === 'expense') {
+                document.getElementById("payerLabel").innerText = "Paid By:";
+                document.getElementById("entryPayer").innerHTML = commonOption + mOptions;
+                document.getElementById("fieldPayer").style.display = "block";
+                document.getElementById("fieldReceiver").style.display = "none";
+                document.getElementById("fieldMembers").style.display = "block";
+            } else if(type === 'collection_settlement') {
+                document.getElementById("payerLabel").innerText = "Payer / Submitting Member:";
+                document.getElementById("entryPayer").innerHTML = mOptions;
+                document.getElementById("entryReceiver").innerHTML = commonOption + mOptions;
+                document.getElementById("fieldPayer").style.display = "block";
+                document.getElementById("fieldReceiver").style.display = "block";
+                document.getElementById("fieldMembers").style.display = "none";
+            }
+            renderMemberChecks('entryMemberChecks');
+        }
+
+        function setEditType(type) {
+            currentEditType = type;
+            document.getElementById("btnEditExp").className = "type-btn " + (type === 'expense' ? 'active-exp' : '');
+            document.getElementById("btnEditCol").className = "type-btn " + (type === 'collection_settlement' ? 'active-col' : '');
+
+            const mOptions = members.map(m => `<option value="${m}">${m}</option>`).join("");
+            const commonOption = `<option value="Common">Common Fund Account</option>`;
+
+            if(type === 'expense') {
+                document.getElementById("editPayerLabel").innerText = "Paid By:";
+                document.getElementById("editPayer").innerHTML = commonOption + mOptions;
+                document.getElementById("editFieldPayer").style.display = "block";
+                document.getElementById("editFieldReceiver").style.display = "none";
+                document.getElementById("editFieldMembers").style.display = "block";
+            } else if(type === 'collection_settlement') {
+                document.getElementById("editPayerLabel").innerText = "Payer / Submitting Member:";
+                document.getElementById("editPayer").innerHTML = mOptions;
+                document.getElementById("editReceiver").innerHTML = commonOption + mOptions;
+                document.getElementById("editFieldPayer").style.display = "block";
+                document.getElementById("editFieldReceiver").style.display = "block";
+                document.getElementById("editFieldMembers").style.display = "none";
+            }
+        }
+
+        function renderMemberChecks(containerId, activeRec = null) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = members.map(m => {
+                const isChecked = activeRec ? (activeRec.members && activeRec.members.includes(m)) : messStatus[m];
+                const customVal = activeRec && activeRec.customShares && activeRec.customShares[m] !== undefined ? activeRec.customShares[m] : '';
+                return `
+                    <div class="member-check-box">
+                        <label>
+                            <input type="checkbox" id="chk_${containerId}_${m}" value="${m}" ${isChecked ? 'checked' : ''} onchange="toggleShareInput('${containerId}', '${m}')">
+                            <span>${m}</span>
+                        </label>
+                        <span id="wrap_${containerId}_${m}" style="display: ${isChecked ? 'none' : 'inline-block'};">
+                            <input type="number" id="inp_${containerId}_${m}" class="custom-share-input" placeholder="Share" value="${customVal}">
+                        </span>
+                    </div>
+                `;
+            }).join("");
+        }
+
+        function toggleShareInput(containerId, m) {
+            const chk = document.getElementById(`chk_${containerId}_${m}`);
+            const wrap = document.getElementById(`wrap_${containerId}_${m}`);
+            if(chk && wrap) wrap.style.display = chk.checked ? "none" : "inline-block";
+        }
+
+        function submitUnifiedEntry() {
+            evaluateAmountInput('entryAmt');
+            const desc = document.getElementById("entryDesc").value.trim();
+            const amt = Number(document.getElementById("entryAmt").value);
+            const date = document.getElementById("entryDate").value;
+            const payer = document.getElementById("entryPayer").value;
+
+            if(!desc || !amt || !date) return alert("Please fill all fields.");
+
+            let included = [], customShares = {}, receiver = null;
+            if(currentEntryType === 'expense') {
+                members.forEach(m => {
+                    const chk = document.getElementById(`chk_entryMemberChecks_${m}`);
+                    if(chk && chk.checked) {
+                        included.push(m);
+                    } else {
+                        const val = document.getElementById(`inp_entryMemberChecks_${m}`)?.value;
+                        if(val !== "" && val !== null && !isNaN(val)) customShares[m] = Number(val);
+                    }
+                });
+            } else if(currentEntryType === 'collection_settlement') {
+                receiver = document.getElementById("entryReceiver").value;
+            }
+
+            records.push({ id: Date.now().toString(), date, desc, type: currentEntryType, amount: amt, paidBy: payer, members: included, customShares, receiver });
+            save(); alert("Saved!"); location.reload();
+        }
+
+        function calculateBalances() {
+            let stats = { consumed: {}, paid: {}, balance: {}, common: 0 };
+            members.forEach(m => { stats.consumed[m] = 0; stats.paid[m] = 0; stats.balance[m] = 0; });
+
+            records.forEach(r => {
+                if(r.type === 'expense') {
+                    let customTotal = 0;
+                    if(r.customShares) {
+                        Object.keys(r.customShares).forEach(m => {
+                            let share = Number(r.customShares[m]);
+                            if(!isNaN(share) && stats.consumed[m] !== undefined) {
+                                stats.consumed[m] += share;
+                                stats.balance[m] -= share;
+                                customTotal += share;
+                            }
+                        });
+                    }
+                    let remainingAmt = r.amount - customTotal;
+                    let share = (r.members && r.members.length > 0) ? (remainingAmt / r.members.length) : 0;
+                    if(r.members) {
+                        r.members.forEach(m => {
+                            if(stats.consumed[m] !== undefined) {
+                                stats.consumed[m] += share;
+                                stats.balance[m] -= share;
+                            }
+                        });
+                    }
+
+                    if(r.paidBy === "Common") stats.common -= r.amount;
+                    else if(stats.paid[r.paidBy] !== undefined) {
+                        stats.paid[r.paidBy] += r.amount;
+                        stats.balance[r.paidBy] += r.amount;
+                    }
+                } else if(r.type === 'collection_settlement') {
+                    if(r.receiver === "Common") {
+                        if(stats.paid[r.paidBy] !== undefined) { stats.paid[r.paidBy] += r.amount; stats.balance[r.paidBy] += r.amount; }
+                        stats.common += r.amount;
+                    } else {
+                        if(stats.balance[r.paidBy] !== undefined) stats.balance[r.paidBy] += r.amount;
+                        if(stats.balance[r.receiver] !== undefined) stats.balance[r.receiver] -= r.amount;
+                    }
+                }
+            });
+            return stats;
+        }
+
+        function renderStatus() {
+            const data = calculateBalances();
+            document.getElementById("commonBalance").innerText = `Rs. ${data.common.toFixed(0)}`;
+            let html = "";
+            members.forEach(m => {
+                const bal = data.balance[m];
+                html += `<div class="balance-item"><span>${m}</span><span class="${bal>=0?'val-pos':'val-neg'}">Rs. ${bal.toFixed(0)}</span></div>`;
+            });
+            document.getElementById("statusDisplay").innerHTML = html;
+        }
+
+        function getFilteredMemberAuditRecs() {
+            const member = document.getElementById("adminAuditSelect").value || members[0];
+            const fromDate = document.getElementById("auditFromDate").value;
+            const toDate = document.getElementById("auditToDate").value;
+
+            let recs = getSortedRecordsNewestFirst().filter(r => (r.members && r.members.includes(member)) || (r.customShares && r.customShares[member] !== undefined) || r.paidBy === member || r.receiver === member);
+
+            if(fromDate) recs = recs.filter(r => r.date >= fromDate);
+            if(toDate) recs = recs.filter(r => r.date <= toDate);
+
+            return { member, recs };
+        }
+
+        function renderAdminAudit() {
+            const { member, recs } = getFilteredMemberAuditRecs();
+
+            let html = `<div style="max-height:280px; overflow-y:auto; border:1px solid var(--border-color); padding:6px; border-radius:8px; background:var(--bg);">`;
+
+            let runningBal = 0;
+            let chrono = getSortedRecordsChronological();
+            let runningMap = {};
+            
+            chrono.forEach(r => {
+                let mShare = 0;
+                let customSum = r.customShares ? Object.values(r.customShares).reduce((a, b) => a + Number(b), 0) : 0;
+                let defaultShare = (r.type === 'expense' && r.members && r.members.length > 0) ? ((r.amount - customSum) / r.members.length) : 0;
+
+                if(r.type === 'expense') {
+                    if(r.customShares && r.customShares[member] !== undefined) {
+                        mShare = Number(r.customShares[member]);
+                    } else if(r.members && r.members.includes(member)) {
+                        mShare = defaultShare;
+                    }
+                    runningBal -= mShare;
+                    if(r.paidBy === member) runningBal += r.amount;
+                } else if(r.type === 'collection_settlement') {
+                    if(r.paidBy === member) runningBal += r.amount;
+                    if(r.receiver === member) runningBal -= r.amount;
+                }
+                runningMap[r.id] = runningBal;
+            });
+
+            if(recs.length === 0) {
+                html += `<div style="text-align:center; padding:15px; font-size:12px; color:#6b21a8;">No transaction history found for ${member} in this range.</div>`;
+            } else {
+                recs.forEach(r => {
+                    let displayAmt = 0;
+                    let isAddition = false;
+                    let customSum = r.customShares ? Object.values(r.customShares).reduce((a, b) => a + Number(b), 0) : 0;
+                    let defaultShare = (r.type === 'expense' && r.members && r.members.length > 0) ? ((r.amount - customSum) / r.members.length) : 0;
+
+                    if(r.type === 'expense') {
+                        if(r.paidBy === member) {
+                            displayAmt = r.amount;
+                            isAddition = true;
+                        } else {
+                            if(r.customShares && r.customShares[member] !== undefined) displayAmt = Number(r.customShares[member]);
+                            else if(r.members && r.members.includes(member)) displayAmt = defaultShare;
+                            isAddition = false;
+                        }
+                    } else if(r.type === 'collection_settlement') {
+                        if(r.paidBy === member) { displayAmt = r.amount; isAddition = true; }
+                        else if(r.receiver === member) { displayAmt = r.amount; isAddition = false; }
+                    }
+
+                    let curBal = runningMap[r.id] || 0;
+                    let balClass = curBal >= 0 ? 'val-pos' : 'val-neg';
+
+                    html += `
+                        <div class="analysis-entry-box">
+                            <div style="font-size:10px; opacity:0.85; display:flex; justify-content:space-between; font-weight:600;">
+                                <span>${r.date}</span>
+                                <span>[${r.desc}]</span>
+                            </div>
+                            <div class="large-central-expense" style="color: ${isAddition ? 'var(--success)' : 'var(--danger)'}">
+                                ${isAddition ? '+' : '-'} Rs ${displayAmt.toFixed(0)}
+                            </div>
+                            <div class="corner-remaining-bal ${balClass}">
+                                Bal: Rs ${curBal.toFixed(0)}
+                            </div>
+                        </div>`;
+                });
+            }
+
+            html += `</div>`;
+            document.getElementById("adminAuditDisplay").innerHTML = html;
+        }
+
+        function processAndExportCanvas(htmlContent, fileName) {
+            const canvasContainer = document.getElementById("hiddenReportCanvas");
+            canvasContainer.innerHTML = htmlContent;
+
+            setTimeout(() => {
+                html2canvas(canvasContainer, {
+                    scale: 2,
+                    useCORS: true,
+                    logging: false,
+                    backgroundColor: "#ffffff"
+                }).then(canvas => {
+                    canvas.toBlob(blob => {
+                        if (!blob || blob.size < 100) {
+                            return alert("Error generating image. Please try again.");
+                        }
+                        lastGeneratedHTML = htmlContent;
+                        const file = new File([blob], fileName, { type: "image/png" });
+                        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                            navigator.share({ files: [file], title: fileName }).catch(() => {});
+                        } else {
+                            const a = document.createElement('a');
+                            a.href = URL.createObjectURL(blob);
+                            a.download = fileName;
+                            a.click();
+                            URL.revokeObjectURL(a.href);
+                        }
+                    }, 'image/png', 1.0);
+                });
+            }, 100);
+        }
+
+        function shareMemberAuditHistory() {
+            const { member, recs } = getFilteredMemberAuditRecs();
+            const fromDate = document.getElementById("auditFromDate").value || "Start";
+            const toDate = document.getElementById("auditToDate").value || "Today";
+
+            if(recs.length === 0) return alert("No history records to share.");
+
+            let textContent = `📜 ${member}'s Transaction History\nRange: ${fromDate} to ${toDate}\n\n`;
+            
+            recs.forEach(r => {
+                textContent += `• ${r.date}: ${r.desc} - Rs ${r.amount}\n`;
+            });
+
+            if (navigator.share) {
+                navigator.share({ text: textContent }).catch(() => {});
+            } else {
+                navigator.clipboard.writeText(textContent);
+                alert("History text copied to clipboard!");
+            }
+        }
+
+        function shareSummaryImage() {
+            const data = calculateBalances();
+            const unsharedRecs = records.filter(r => Number(r.id) > Number(lastSharedTimestamp));
+            const noteText = document.getElementById("summaryNote").value.trim();
+            const todayStr = new Date().toISOString().split('T')[0];
+
+            let groupedRecs = {};
+            unsharedRecs.forEach(r => {
+                if(!groupedRecs[r.date]) groupedRecs[r.date] = [];
+                groupedRecs[r.date].push(r);
+            });
+
+            let sortedDates = Object.keys(groupedRecs).sort((a, b) => new Date(a) - new Date(b));
+
+            let htmlContent = `<h3 style="margin:0 0 10px 0; color:#4c1d95; text-align:center;">📋 Hostel Expense Report</h3>`;
+
+            if(sortedDates.length === 0) {
+                htmlContent += `<div style="text-align:center; padding:10px;">• No new expenses since last share</div>`;
+            } else {
+                sortedDates.forEach(date => {
+                    let dateHeading = (date === todayStr) ? `<u>Today's [${date}]</u>` : `<u>${date}</u>`;
+                    htmlContent += `<div style="margin-top:10px; font-weight:bold; font-size:14px; color:#3b0764;">${dateHeading}</div>`;
+                    groupedRecs[date].forEach(r => {
+                        htmlContent += `<div style="padding:2px 0 2px 10px; font-size:13px;">${r.desc} - <b>Rs ${r.amount}</b></div>`;
+                    });
+                });
+            }
+
+            htmlContent += `<br><div style="font-weight:bold; font-size:15px; color:#4c1d95; margin-top:10px;">Net Balances</div>`;
+            members.forEach(m => {
+                htmlContent += `<div style="padding:2px 0 2px 10px; font-size:13px;">${m} __________ <b>Rs ${data.balance[m].toFixed(0)}</b></div>`;
+            });
+
+            htmlContent += `<br><div style="font-size:14px; font-weight:bold; color:#4c1d95;">Common Account: <b>Rs ${data.common.toFixed(0)}</b></div>`;
+
+            if(noteText) {
+                htmlContent += `<br><div style="font-size:12px; color:#64748b;"><b>Note:</b> ${noteText}</div>`;
+            }
+
+            processAndExportCanvas(htmlContent, `Expense_Report_${todayStr}.png`);
+
+            if(records.length > 0) {
+                let currentMaxId = Math.max(...records.map(r => Number(r.id))).toString();
+                if(unsharedRecs.length > 0){
+                    lastSharedTimestamp = currentMaxId;
+                    save();
+                }
+            }
+        }
+
+        function regenerateLastSummary() {
+            if(lastGeneratedHTML) {
+                processAndExportCanvas(lastGeneratedHTML, `Expense_Report_Regenerated.png`);
+            } else {
+                alert("No previous summary available to regenerate.");
+            }
+        }
+
+        function shareAppDirect() {
+            const noteText = document.getElementById("appNote").value.trim();
+            const appUrl = window.location.href;
+            const text = `${noteText ? noteText + '\n\n' : ''}Access Hostel Expense Manager App here:\n${appUrl}`;
+            
+            if (navigator.share) {
+                navigator.share({ text }).catch(() => {});
+            } else {
+                navigator.clipboard.writeText(text);
+                alert("App link copied to clipboard!");
+            }
+        }
+
+        function renderRecords() {
+            const query = (document.getElementById("recordSearchInput")?.value || "").toLowerCase().trim();
+            let html = "";
+            let activeMonthRecs = getActiveMonthRecords();
+
+            activeMonthRecs.forEach(r => {
+                let badge = r.type === 'expense' ? 'EXP' : 'SETT';
+                let targetMembersArr = [];
+                
+                let customSum = r.customShares ? Object.values(r.customShares).reduce((a, b) => a + Number(b), 0) : 0;
+                let defaultShare = (r.type === 'expense' && r.members && r.members.length > 0) ? ((r.amount - customSum) / r.members.length) : 0;
+
+                if(r.type === 'expense') {
+                    if(r.members) {
+                        r.members.forEach(m => {
+                            targetMembersArr.push(`${m}${defaultShare > 0 ? '(' + defaultShare.toFixed(0) + ')' : ''}`);
+                        });
+                    }
+                    if(r.customShares) {
+                        Object.keys(r.customShares).forEach(m => {
+                            targetMembersArr.push(`${m}(${r.customShares[m]})`);
+                        });
+                    }
+                }
+
+                let targetMembers = targetMembersArr.join(", ") || "-";
+                if(r.type === 'collection_settlement') targetMembers = `To: ${r.receiver}`;
+
+                const dateObj = new Date(r.date);
+                const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                const monthYearStr = `${monthNames[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
+                const dayNum = dateObj.getDate();
+
+                if(!query || r.desc.toLowerCase().includes(query) || r.paidBy.toLowerCase().includes(query) || targetMembers.toLowerCase().includes(query)) {
+                    html += `<tr>
+                        <td style="text-align:center; padding: 4px;">
+                            <span style="font-size:8px; opacity:0.75; display:block; line-height:1;">${monthYearStr}</span>
+                            <b style="font-size:12px;">${dayNum}</b>
+                        </td>
+                        <td><span class="tag-badge">${badge}</span></td>
+                        <td style="text-align:left;">${r.desc}</td>
+                        <td><b>Rs ${r.amount}</b></td>
+                        <td>${r.paidBy === "Common" ? "🏦 Common" : r.paidBy}</td>
+                        <td style="font-size:9px;">${targetMembers}</td>
+                        ${isRecordEditMode ? `<td>
+                            <div class="action-btns">
+                                <button class="btn-edit icon-btn" onclick="openEditModal('${r.id}')" title="Edit entry">✏️</button>
+                                <button class="btn-danger icon-btn" onclick="deleteRec('${r.id}')" title="Delete entry">🗑️</button>
+                            </div>
+                        </td>` : ''}
+                    </tr>`;
+                }
+            });
+            document.getElementById("recordsBody").innerHTML = html;
+        }
+
+        function renderAnalysis() {
+            document.getElementById("adminAuditSelect").innerHTML = members.map(m => `<option value="${m}" ${m===adminMember?'selected':''}>${m}</option>`).join("");
+            renderAdminAudit();
+
+            const timeframe = document.getElementById("pieTimeframe").value;
+            const selectedMonth = document.getElementById("pieMonthPicker").value || new Date().toISOString().slice(0, 7);
+
+            let filteredRecs = records.filter(r => r.type === 'expense');
+            if(timeframe === 'monthly') {
+                filteredRecs = filteredRecs.filter(r => r.date.startsWith(selectedMonth));
+            } else if(timeframe === 'weekly') {
+                const now = new Date();
+                filteredRecs = filteredRecs.filter(r => (Math.abs(now - new Date(r.date)) / (1000 * 60 * 60 * 24)) <= 7);
+            } else if(timeframe === 'daily') {
+                const today = new Date().toISOString().split('T')[0];
+                filteredRecs = filteredRecs.filter(r => r.date === today);
+            }
+
+            let memberSums = {};
+            members.forEach(m => memberSums[m] = 0);
+            filteredRecs.forEach(r => {
+                let customSum = r.customShares ? Object.values(r.customShares).reduce((a, b) => a + Number(b), 0) : 0;
+                let defaultShare = (r.members && r.members.length > 0) ? ((r.amount - customSum) / r.members.length) : 0;
+                if(r.members) {
+                    r.members.forEach(m => { if(memberSums[m] !== undefined) memberSums[m] += defaultShare; });
+                }
+                if(r.customShares) {
+                    Object.keys(r.customShares).forEach(m => { if(memberSums[m] !== undefined) memberSums[m] += Number(r.customShares[m]); });
+                }
+            });
+
+            const ctx = document.getElementById('expenseChart').getContext('2d');
+            if(window.myChart) window.myChart.destroy();
+            window.myChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: members,
+                    datasets: [{ data: members.map(m => memberSums[m]), backgroundColor: ['#8b5cf6', '#0ea5e9', '#10b981', '#f59e0b', '#ec4899', '#f97316'] }]
+                }
+            });
+        }
+
+        function openEditModal(id) {
+            activeEditId = id;
+            let rec = records.find(r => r.id === id);
+            if(!rec) return;
+
+            document.getElementById("editDesc").value = rec.desc;
+            document.getElementById("editAmt").value = rec.amount;
+            document.getElementById("editDate").value = rec.date;
+            setEditType(rec.type || 'expense');
+
+            if(rec.paidBy) document.getElementById("editPayer").value = rec.paidBy;
+            if(rec.receiver) document.getElementById("editReceiver").value = rec.receiver;
+
+            renderMemberChecks('editMemberChecks', rec);
+            document.getElementById("editModal").style.display = "flex";
+        }
+
+        function closeModal() { document.getElementById("editModal").style.display = "none"; }
+
+        function saveEdits() {
+            evaluateAmountInput('editAmt');
+            let rec = records.find(r => r.id === activeEditId);
+            if(rec) {
+                rec.desc = document.getElementById("editDesc").value;
+                rec.amount = Number(document.getElementById("editAmt").value);
+                rec.date = document.getElementById("editDate").value;
+                rec.type = currentEditType;
+                rec.paidBy = document.getElementById("editPayer").value;
+
+                if(currentEditType === 'expense') {
+                    rec.members = [];
+                    rec.customShares = {};
+                    members.forEach(m => {
+                        const chk = document.getElementById(`chk_editMemberChecks_${m}`);
+                        if(chk && chk.checked) {
+                            rec.members.push(m);
+                        } else {
+                            const val = document.getElementById(`inp_editMemberChecks_${m}`)?.value;
+                            if(val !== "" && val !== null && !isNaN(val)) rec.customShares[m] = Number(val);
+                        }
+                    });
+                    rec.receiver = null;
+                } else if(currentEditType === 'collection_settlement') {
+                    rec.receiver = document.getElementById("editReceiver").value;
+                    rec.members = [];
+                    rec.customShares = {};
+                }
+                save(); location.reload();
+            }
+        }
+
+        function deleteRec(id) { if(confirm("Delete record?")) { records = records.filter(r => r.id !== id); save(); location.reload(); } }
+
+        function showPage(id, el) {
+            disableAllEditModes();
+            document.querySelectorAll(".page").forEach(p => p.style.display = "none");
+            document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+            document.getElementById(id).style.display = "block";
+            if(el) el.classList.add("active");
+            if(id === 'statusPage') renderStatus();
+            if(id === 'userPage') renderAnalysis();
+        }
+
+        function toggleEditMemberMode() { 
+            isSettingsEditMode = !isSettingsEditMode; 
+            document.getElementById("addMemberControls").style.display = isSettingsEditMode ? "flex" : "none";
+            document.getElementById("addCatControls").style.display = isSettingsEditMode ? "flex" : "none";
+            renderMemberList(); 
+            populateCategoriesDatalist();
+        }
+
+        function renderMemberList() {
+            document.getElementById("manageMembersList").innerHTML = members.map(m => `
+                <div class="balance-item">
+                    <span>${m} ${isSettingsEditMode ? `[${messStatus[m]?'ON':'OFF'}]` : ''}</span>
+                    <div>
+                        ${isSettingsEditMode ? `
+                            <button class="toggle-btn ${messStatus[m]?'status-on':'status-off'}" style="font-size:10px; padding:2px 5px;" onclick="toggleMess('${m}')" title="Toggle mess status">${messStatus[m]?'Turn Off':'Turn On'}</button>
+                            <button class="btn-danger icon-btn" onclick="deleteMember('${m}')" title="Delete member">🪣</button>
+                        ` : ''}
+                    </div>
+                </div>`).join("");
+        }
+
+        function init() {
+            applyThemeAndBg();
+            populateCategoriesDatalist();
+            setEntryType('expense');
+
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById("entryDate").value = today;
+            document.getElementById("pieMonthPicker").value = today.slice(0, 7);
+
+            renderRecords();
+        }
+
+        function toggleMess(name) { messStatus[name] = !messStatus[name]; save(); renderMemberList(); }
+        function addMember() {
+            const name = document.getElementById("newMemberName").value.trim();
+            if(name && !members.includes(name)) { members.push(name); messStatus[name] = true; save(); location.reload(); }
+        }
+        function deleteMember(name) { if(confirm(`Remove ${name}?`)) { members = members.filter(m => m !== name); delete messStatus[name]; save(); location.reload(); } }
+
+        init();
+    </script>
+</body>
+</html>
