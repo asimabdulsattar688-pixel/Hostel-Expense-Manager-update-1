@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hostel Expenses Manager by ASIM SHAHZAD v22.0</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -18,14 +18,14 @@
             --bg: #f3e8ff;
             --card-bg: #ffffff;
             --text-color: #2e1065;
-            --border-color: #ddd6fe;
+            --border-color: #c4b5fd;
         }
 
         body.theme-dark {
             --bg: #0f172a;
             --card-bg: #1e1b4b;
             --text-color: #f3e8ff;
-            --border-color: #3730a3;
+            --border-color: #4338ca;
             --primary: #5b21b6;
         }
 
@@ -33,7 +33,7 @@
             --bg: #090514;
             --card-bg: #130a2a;
             --text-color: #e9d5ff;
-            --border-color: #2e1065;
+            --border-color: #581c87;
             --primary: #2e1065;
             --accent: #a855f7;
         }
@@ -42,7 +42,7 @@
             --bg: #ecfdf5;
             --card-bg: #ffffff;
             --text-color: #065f46;
-            --border-color: #a7f3d0;
+            --border-color: #6ee7b7;
             --primary: #047857;
             --accent: #059669;
         }
@@ -51,7 +51,7 @@
             --bg: #fffbeb;
             --card-bg: #ffffff;
             --text-color: #9a3412;
-            --border-color: #fed7aa;
+            --border-color: #fcd34d;
             --primary: #c2410c;
             --accent: #ea580c;
         }
@@ -76,14 +76,15 @@
             content: '';
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(243, 232, 255, 0.75);
+            background: rgba(243, 232, 255, 0.78);
             z-index: -1;
             pointer-events: none;
         }
         body.theme-dark.has-custom-bg::before, body.theme-midnight.has-custom-bg::before {
-            background: rgba(15, 23, 42, 0.8);
+            background: rgba(15, 23, 42, 0.85);
         }
 
+        /* 1. TOP NAVBAR */
         .top-navbar {
             height: 52px;
             background: linear-gradient(135deg, #4c1d95, #6d28d9);
@@ -96,8 +97,25 @@
             box-shadow: 0 4px 12px rgba(76, 29, 149, 0.25);
             z-index: 10;
         }
-        .top-navbar .brand { font-weight: 700; font-size: 13px; letter-spacing: 0.5px; text-align: center; flex: 1; margin: 0 10px; word-break: break-word; }
-        .top-navbar .menu-btn { font-size: 24px; cursor: pointer; background: none; border: none; color: white; padding: 0; width: auto; margin: 0; }
+        .top-navbar .brand { 
+            font-weight: 700; 
+            font-size: 13px; 
+            letter-spacing: 0.5px; 
+            text-align: center; 
+            flex: 1; 
+            margin: 0 10px; 
+            word-break: break-word; 
+        }
+        .top-navbar .menu-btn { 
+            font-size: 24px; 
+            cursor: pointer; 
+            background: none; 
+            border: none; 
+            color: white; 
+            padding: 0; 
+            width: auto; 
+            margin: 0; 
+        }
 
         .app-container { display: flex; flex-grow: 1; height: calc(100vh - 52px); overflow: hidden; }
 
@@ -136,7 +154,7 @@
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(139, 92, 246, 0.08);
             margin-bottom: 14px;
-            border: 1px solid var(--border-color);
+            border: 2px solid var(--border-color);
             width: 100%;
         }
 
@@ -146,12 +164,12 @@
             padding: 9px 12px;
             margin: 4px 0;
             border-radius: 8px;
-            border: 1px solid var(--border-color);
+            border: 2px solid var(--border-color);
             background: var(--card-bg);
             color: var(--text-color);
             font-size: 13px;
             outline: none;
-            transition: border 0.2s ease;
+            transition: border 0.2s ease, box-shadow 0.2s ease;
         }
         input:focus, select:focus, textarea:focus {
             border-color: var(--accent);
@@ -168,7 +186,7 @@
         .type-selector { display: flex; gap: 8px; margin-bottom: 12px; width: 100%; }
         .type-btn {
             flex: 1; padding: 10px 2px; font-size: 12px;
-            border: 1px solid var(--border-color); background: var(--bg); color: var(--text-color);
+            border: 2px solid var(--border-color); background: var(--bg); color: var(--text-color);
             cursor: pointer; border-radius: 8px; font-weight: bold; text-align: center;
         }
         .type-btn.active-exp { background: var(--danger); color: white; border-color: var(--danger); }
@@ -179,7 +197,7 @@
         .val-neg { color: var(--danger); font-weight: bold; }
         .account-card { background: linear-gradient(135deg, #5b21b6, #7c3aed); color: white; padding: 18px; border-radius: 12px; text-align: center; margin-bottom: 14px; box-shadow: 0 4px 12px rgba(91, 33, 182, 0.3); }
 
-        .table-wrapper { width: 100%; overflow-x: auto; border: 1px solid var(--border-color); border-radius: 8px; }
+        .table-wrapper { width: 100%; overflow-x: auto; border: 2px solid var(--border-color); border-radius: 8px; }
         table { width: 100%; border-collapse: collapse; font-size: 11px; min-width: 450px; }
         th, td { padding: 8px 10px; text-align: center; border-bottom: 1px solid var(--border-color); border-right: 1px solid var(--border-color); white-space: nowrap; }
         th { background: rgba(139, 92, 246, 0.08); font-size: 11px; font-weight: 700; color: var(--primary); }
@@ -187,20 +205,38 @@
 
         .modal-overlay { display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(15, 23, 42, 0.6); justify-content:flex-end; align-items:stretch; z-index:1000; backdrop-filter: blur(2px); }
         
+        /* 3. SETTINGS MODAL (~35% width with bold 2px borders) */
         .modal-content-side {
-            background: var(--card-bg); padding: 18px;
-            width: 35vw; min-width: 280px; max-width: 350px; height: 100vh;
-            overflow-y: auto; border-left: 4px solid var(--accent); box-shadow: -5px 0 25px rgba(0,0,0,0.3);
+            background: var(--card-bg); 
+            padding: 18px;
+            width: 35vw; 
+            min-width: 280px; 
+            max-width: 340px; 
+            height: 100vh;
+            overflow-y: auto; 
+            border-left: 4px solid var(--accent); 
+            border: 2px solid var(--border-color);
+            box-shadow: -5px 0 25px rgba(0,0,0,0.3);
         }
-        .modal-content { background:var(--card-bg); padding:18px; border-radius:12px; width:92%; max-width:450px; max-height: 85vh; overflow-y: auto; margin: auto; }
+        .modal-content { 
+            background:var(--card-bg); 
+            padding:18px; 
+            border-radius:12px; 
+            width:92%; 
+            max-width:450px; 
+            max-height: 85vh; 
+            overflow-y: auto; 
+            margin: auto; 
+            border: 2px solid var(--border-color); 
+        }
 
+        /* 4. MEMBER GRID LAYOUT (Name on Left, Checkbox/Toggle on Right) */
         .member-grid-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
             gap: 8px;
             margin-top: 6px;
         }
-        
         .member-check-box {
             background: var(--bg);
             border: 1px solid var(--border-color);
@@ -245,6 +281,7 @@
         .corner-remaining-bal { position: absolute; right: 8px; bottom: 6px; font-size: 10px; font-weight: bold; padding: 2px 5px; border-radius: 4px; }
         .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
         
+        /* 8. FINANCIAL ANALYSIS CONTROLS WRAPPING */
         .analysis-controls-flex {
             display: flex;
             gap: 6px;
@@ -304,17 +341,32 @@
         @media (min-width: 600px) {
             .share-grid { grid-template-columns: 1fr 1fr; }
         }
+
+        /* 9. SUBTLE REGENERATE LINK STYLING */
+        .subtle-regen-link {
+            font-size: 11px;
+            color: var(--accent);
+            text-decoration: underline;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+        .subtle-regen-link:hover {
+            color: var(--accent-hover);
+        }
     </style>
 </head>
 <body>
 
+    <!-- 1. TOP NAVBAR -->
     <div class="top-navbar">
         <button class="menu-btn" style="visibility: hidden;">☰</button>
         <span class="brand">Hostel Expenses Manager by ASIM SHAHZAD v22.0</span>
         <button class="menu-btn" id="threeLineMenuBtn" onclick="toggleSettingsModal()" title="Open App Settings & Preferences">☰</button>
     </div>
 
+    <!-- MAIN APP WRAPPER -->
     <div class="app-container">
+        <!-- SIDEBAR NAVIGATION -->
         <div class="sidebar">
             <div class="nav-item active" onclick="showPage('entryPage', this)" title="Add New Expense or Settlement Entry"><i>📝</i>Entry</div>
             <div class="nav-item" onclick="showPage('recordsPage', this)" title="View Current Month Transactions"><i>📜</i>Records</div>
@@ -335,12 +387,13 @@
                     </div>
 
                     <label class="section-label">Description / Item Note:</label>
-                    <input id="entryDesc" list="categoryDatalist" placeholder="Type or select description (e.g. Eggs, Mess, Rent)" title="Type custom note or select from categories">
+                    <input id="entryDesc" type="text" list="categoryDatalist" placeholder="Type or select description (e.g. Eggs, Mess, Rent)" title="Type custom note or select from categories">
                     <datalist id="categoryDatalist"></datalist>
                     
                     <label class="section-label">Amount (Rs.):</label>
                     <div style="display:flex; gap:6px; align-items:center;">
-                        <input id="entryAmt" placeholder="Enter amount or formula (e.g. 250+100)" title="Enter amount. Press '+' button to sum values" onblur="evaluateAmountInput('entryAmt')" onkeydown="if(event.key==='Enter') evaluateAmountInput('entryAmt')">
+                        <!-- 2. NUMERIC KEYBOARD ATTR -->
+                        <input id="entryAmt" type="text" inputmode="decimal" placeholder="Enter amount or formula (e.g. 250+100)" title="Enter amount. Press '+' button to sum values" onblur="evaluateAmountInput('entryAmt')" onkeydown="if(event.key==='Enter') evaluateAmountInput('entryAmt')">
                         <button type="button" class="icon-btn" style="height:37px; background:var(--warning);" onclick="appendPlus('entryAmt')" title="Click to add '+'">+</button>
                     </div>
 
@@ -456,15 +509,15 @@
                 </div>
             </div>
 
-            <!-- CUSTOMIZED SHARE TAB -->
+            <!-- SHARE TAB -->
             <div id="sharePage" class="page">
                 <div class="share-grid">
                     <div class="card">
                         <h3>📋 Share Today's Expenses</h3>
                         <textarea id="summaryNote" rows="2" placeholder="Add custom note here..." style="font-size:11px;" title="Optional note appended to image report"></textarea>
                         <button class="btn-success" onclick="shareSummaryImage()" style="margin-top:8px; padding:10px;" title="Generate and share image report">📲 Share Today's Summary</button>
-                        <div style="text-align: center; margin-top: 8px;">
-                            <a href="#" onclick="regenerateLastSummary(); return false;" style="font-size: 11px; text-decoration: underline; color: var(--accent);">🔄 Regenerate Last Summary</a>
+                        <div style="text-align: center; margin-top: 10px;">
+                            <span class="subtle-regen-link" onclick="regenerateLastSummary()">🔄 Regenerate Last Summary</span>
                         </div>
                     </div>
 
@@ -480,7 +533,7 @@
         </div>
     </div>
 
-    <!-- SETTINGS PANEL -->
+    <!-- 3. SETTINGS PANEL (35% width, 2px borders) -->
     <div id="settingsModal" class="modal-overlay" onclick="handleModalBgClick(event)">
         <div class="modal-content-side">
             <div class="header-flex">
@@ -523,6 +576,13 @@
                 <input type="file" id="bgImageInput" accept="image/*" onchange="handleBackgroundUpload(this)" title="Choose a custom background image from gallery">
                 <button class="btn-danger" onclick="clearBackgroundImage()" style="margin-top:6px; font-size:11px; padding:6px;">🗑️ Clear Background Image</button>
             </div>
+
+            <!-- 6. RESET APP / MASTER DELETE -->
+            <div class="card" style="border-color: var(--danger);">
+                <h3 style="color: var(--danger); margin-bottom: 6px;">⚠️ Master Data Control</h3>
+                <p style="font-size: 11px; opacity: 0.8; margin-bottom: 10px;">Erases all financial records and app settings from local storage.</p>
+                <button class="btn-danger" onclick="masterResetTwoStep()" style="font-size:11px; padding:8px;" title="Reset all app data and records">🗑️ Delete All Data / Master Reset</button>
+            </div>
         </div>
     </div>
 
@@ -541,10 +601,11 @@
             <input id="editDate" type="date" title="Update transaction date">
 
             <label class="section-label">Description:</label>
-            <input id="editDesc" placeholder="Description">
+            <input id="editDesc" type="text" placeholder="Description">
 
             <label class="section-label">Amount (Rs.):</label>
-            <input id="editAmt" placeholder="Amount" onblur="evaluateAmountInput('editAmt')">
+            <!-- 2. NUMERIC KEYBOARD ATTR -->
+            <input id="editAmt" type="text" inputmode="decimal" placeholder="Amount" onblur="evaluateAmountInput('editAmt')">
             
             <div id="editFieldPayer" class="dynamic-field">
                 <label class="section-label" id="editPayerLabel">Paid / Submitted By:</label>
@@ -567,6 +628,7 @@
     </div>
 
     <script>
+        const CURRENT_APP_VERSION = "22.0";
         let members = JSON.parse(localStorage.getItem("members") || '["Ali", "Asghar"]');
         let messStatus = JSON.parse(localStorage.getItem("messStatus") || '{}');
         let categories = JSON.parse(localStorage.getItem("categories") || '["Mess/Food", "Rent", "Utilities", "Groceries", "General", "Eggs"]');
@@ -584,7 +646,13 @@
         let isRecordEditMode = false;
         let isSettingsOpen = false;
 
-        members.forEach(m => { if(messStatus[m] === undefined) messStatus[m] = true; });
+        function checkAppVersionMigration() {
+            const savedVer = localStorage.getItem("appVersion");
+            if (!savedVer || savedVer !== CURRENT_APP_VERSION) {
+                localStorage.setItem("appVersion", CURRENT_APP_VERSION);
+            }
+            members.forEach(m => { if(messStatus[m] === undefined) messStatus[m] = true; });
+        }
 
         function save() {
             localStorage.setItem("records", JSON.stringify(records));
@@ -770,6 +838,7 @@
             renderMemberChecks('entryMemberChecks');
         }
 
+        /* 7. SETTLEMENT & COLLECTION EDIT BUG FIX */
         function setEditType(type) {
             currentEditType = type;
             document.getElementById("btnEditExp").className = "type-btn " + (type === 'expense' ? 'active-exp' : '');
@@ -794,6 +863,7 @@
             }
         }
 
+        /* 4. MEMBER GRID LAYOUT GENERATION */
         function renderMemberChecks(containerId, activeRec = null) {
             const container = document.getElementById(containerId);
             container.innerHTML = members.map(m => {
@@ -844,9 +914,15 @@
             }
 
             records.push({ id: Date.now().toString(), date, desc, type: currentEntryType, amount: amt, paidBy: payer, members: included, customShares, receiver });
-            save(); alert("Saved!"); location.reload();
+            save(); 
+            alert("Saved!"); 
+            renderRecords();
+            renderStatus();
+            document.getElementById("entryDesc").value = "";
+            document.getElementById("entryAmt").value = "";
         }
 
+        /* 7. BALANCE CALCULATION logic handling Common & Member settlements */
         function calculateBalances() {
             let stats = { consumed: {}, paid: {}, balance: {}, common: 0 };
             members.forEach(m => { stats.consumed[m] = 0; stats.paid[m] = 0; stats.balance[m] = 0; });
@@ -1023,6 +1099,7 @@
             }, 100);
         }
 
+        /* 8. MEMBER HISTORY DIRECT SHARE */
         function shareMemberAuditHistory() {
             const { member, recs } = getFilteredMemberAuditRecs();
             const fromDate = document.getElementById("auditFromDate").value || "Start";
@@ -1044,6 +1121,7 @@
             }
         }
 
+        /* 9. SHARE PAGE SUMMARY GENERATION */
         function shareSummaryImage() {
             const data = calculateBalances();
             const unsharedRecs = records.filter(r => Number(r.id) > Number(lastSharedTimestamp));
@@ -1094,6 +1172,7 @@
             }
         }
 
+        /* 9. SUBTLE REGENERATE LINK FUNCTION */
         function regenerateLastSummary() {
             if(lastGeneratedHTML) {
                 processAndExportCanvas(lastGeneratedHTML, `Expense_Report_Regenerated.png`);
@@ -1162,13 +1241,23 @@
                         ${isRecordEditMode ? `<td>
                             <div class="action-btns">
                                 <button class="btn-edit icon-btn" onclick="openEditModal('${r.id}')" title="Edit entry">✏️</button>
-                                <button class="btn-danger icon-btn" onclick="deleteRec('${r.id}')" title="Delete entry">🗑️</button>
+                                <button class="btn-danger icon-btn" onclick="deleteRecPrompt('${r.id}')" title="Delete entry">🗑️</button>
                             </div>
                         </td>` : ''}
                     </tr>`;
                 }
             });
             document.getElementById("recordsBody").innerHTML = html;
+        }
+
+        /* 5. EXPLICIT RECORD DELETE PROMPT & REALTIME RE-RENDER */
+        function deleteRecPrompt(id) {
+            if (confirm("Are you sure you want to delete this record?")) {
+                records = records.filter(r => r.id !== id);
+                save();
+                renderRecords();
+                renderStatus();
+            }
         }
 
         function renderAnalysis() {
@@ -1213,6 +1302,7 @@
             });
         }
 
+        /* 7. OPEN EDIT MODAL FIX FOR SETTLEMENTS & COLLECTIONS */
         function openEditModal(id) {
             activeEditId = id;
             let rec = records.find(r => r.id === id);
@@ -1222,6 +1312,7 @@
             document.getElementById("editAmt").value = rec.amount;
             document.getElementById("editDate").value = rec.date;
             
+            // Populate SELECT options before assigning value
             setEditType(rec.type || 'expense');
 
             if(rec.paidBy) document.getElementById("editPayer").value = rec.paidBy;
@@ -1233,6 +1324,7 @@
 
         function closeModal() { document.getElementById("editModal").style.display = "none"; }
 
+        /* 5. SAVE EDITS RE-RENDERS WITHOUT PAGE RELOAD */
         function saveEdits() {
             evaluateAmountInput('editAmt');
             let rec = records.find(r => r.id === activeEditId);
@@ -1261,11 +1353,32 @@
                     rec.members = [];
                     rec.customShares = {};
                 }
-                save(); location.reload();
+                save(); 
+                closeModal();
+                renderRecords();
+                renderStatus();
             }
         }
 
-        function deleteRec(id) { if(confirm("Delete record?")) { records = records.filter(r => r.id !== id); save(); location.reload(); } }
+        /* 6. RESET APP / MASTER DELETE 2-STEP CONFIRMATION */
+        function masterResetTwoStep() {
+            const step1 = confirm("Are you sure you want to delete ALL data? This cannot be undone!");
+            if(step1) {
+                const step2 = prompt("Type DELETE to confirm wiping all data:");
+                if(step2 === "DELETE") {
+                    records = [];
+                    lastSharedTimestamp = "0";
+                    lastGeneratedHTML = "";
+                    save();
+                    alert("Master Reset Successful! All data erased.");
+                    renderRecords();
+                    renderStatus();
+                    toggleSettingsModal();
+                } else {
+                    alert("Reset cancelled. Confirmation text did not match 'DELETE'.");
+                }
+            }
+        }
 
         function showPage(id, el) {
             disableAllEditModes();
@@ -1299,6 +1412,7 @@
         }
 
         function init() {
+            checkAppVersionMigration();
             applyThemeAndBg();
             populateCategoriesDatalist();
             setEntryType('expense');
@@ -1313,9 +1427,17 @@
         function toggleMess(name) { messStatus[name] = !messStatus[name]; save(); renderMemberList(); }
         function addMember() {
             const name = document.getElementById("newMemberName").value.trim();
-            if(name && !members.includes(name)) { members.push(name); messStatus[name] = true; save(); location.reload(); }
+            if(name && !members.includes(name)) { members.push(name); messStatus[name] = true; save(); renderMemberList(); setEntryType(currentEntryType); }
         }
-        function deleteMember(name) { if(confirm(`Remove ${name}?`)) { members = members.filter(m => m !== name); delete messStatus[name]; save(); location.reload(); } }
+        function deleteMember(name) { 
+            if(confirm(`Remove ${name}?`)) { 
+                members = members.filter(m => m !== name); 
+                delete messStatus[name]; 
+                save(); 
+                renderMemberList(); 
+                setEntryType(currentEntryType);
+            } 
+        }
 
         init();
     </script>
