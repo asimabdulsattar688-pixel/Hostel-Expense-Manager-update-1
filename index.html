@@ -186,9 +186,11 @@
         label.section-label { font-size: 11px; font-weight: bold; color: #6b21a8; display: block; margin-top: 8px; }
 
         .modal-overlay { display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(15, 23, 42, 0.6); justify-content:flex-end; align-items:stretch; z-index:1000; backdrop-filter: blur(2px); }
+        
+        /* Fixed Issue #3: Reduced Settings panel width to 35% */
         .modal-content-side {
             background: var(--card-bg); padding: 18px;
-            width: 88%; max-width: 380px; height: 100vh;
+            width: 35vw; min-width: 280px; max-width: 350px; height: 100vh;
             overflow-y: auto; border-left: 4px solid var(--accent); box-shadow: -5px 0 25px rgba(0,0,0,0.3);
         }
         .modal-content { background:var(--card-bg); padding:18px; border-radius:12px; width:92%; max-width:450px; max-height: 85vh; overflow-y: auto; margin: auto; }
@@ -199,6 +201,8 @@
             gap: 8px;
             margin-top: 6px;
         }
+        
+        /* Fixed Issue #2: Names aligned on left, toggle/checkboxes on right */
         .member-check-box {
             background: var(--bg);
             border: 1px solid var(--border-color);
@@ -206,7 +210,7 @@
             border-radius: 8px;
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
             gap: 6px;
             font-size: 13px;
             font-weight: 600;
@@ -214,11 +218,13 @@
         .member-check-box label {
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
+            flex-direction: row-reverse;
             gap: 6px;
             cursor: pointer;
             width: 100%;
             margin: 0;
+            text-align: left;
         }
         .custom-share-input {
             width: 60px;
@@ -240,6 +246,24 @@
         .large-central-expense { font-size: 16px; font-weight: bold; text-align: center; margin: 4px 0; }
         .corner-remaining-bal { position: absolute; right: 8px; bottom: 6px; font-size: 10px; font-weight: bold; padding: 2px 5px; border-radius: 4px; }
         .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        
+        /* Fixed Issue #4: Controls wrapping for analysis date selection */
+        .analysis-controls-flex {
+            display: flex;
+            gap: 6px;
+            align-items: stretch;
+            flex-wrap: wrap;
+        }
+        @media (max-width: 480px) {
+            .analysis-controls-flex {
+                flex-direction: column;
+                width: 100%;
+            }
+            .analysis-controls-flex select, .analysis-controls-flex input {
+                width: 100% !important;
+            }
+        }
+
         .tag-badge { font-size: 9px; padding: 2px 6px; border-radius: 4px; background: #f3e8ff; color: #6b21a8; font-weight: bold; }
 
         .audit-controls-row {
@@ -398,16 +422,16 @@
                 <h2>📊 Financial Analysis</h2>
 
                 <div class="card" id="cardPieChart" style="margin-bottom: 14px;">
-                    <div class="header-flex">
+                    <div class="header-flex" style="flex-wrap: wrap;">
                         <h3 style="margin:0;">Consumption Share</h3>
-                        <div style="display:flex; gap:5px;">
-                            <select id="pieTimeframe" onchange="renderAnalysis()" style="width:95px; padding:4px; font-size:11px;" title="Select analysis timeframe">
+                        <div class="analysis-controls-flex">
+                            <select id="pieTimeframe" onchange="renderAnalysis()" style="min-width:95px; padding:4px; font-size:11px;" title="Select analysis timeframe">
                                 <option value="monthly">Monthly</option>
                                 <option value="weekly">Weekly</option>
                                 <option value="daily">Daily</option>
                                 <option value="all">All Time</option>
                             </select>
-                            <input type="month" id="pieMonthPicker" onchange="renderAnalysis()" style="width:120px; padding:3px; font-size:11px;" title="Filter historical analysis by month">
+                            <input type="month" id="pieMonthPicker" onchange="renderAnalysis()" style="min-width:120px; padding:3px; font-size:11px;" title="Filter historical analysis by month">
                         </div>
                     </div>
                     <div style="max-width:320px; margin:0 auto;">
@@ -505,6 +529,7 @@
         </div>
     </div>
 
+    <!-- EDIT RECORD MODAL -->
     <div id="editModal" class="modal-overlay" onclick="handleEditModalBgClick(event)">
         <div class="modal-content">
             <h3>✏️ Edit Record</h3>
@@ -748,6 +773,7 @@
             renderMemberChecks('entryMemberChecks');
         }
 
+        /* Fixed Issue #1: Correctly populates Payer and Receiver dropdown options in Edit Modal */
         function setEditType(type) {
             currentEditType = type;
             document.getElementById("btnEditExp").className = "type-btn " + (type === 'expense' ? 'active-exp' : '');
@@ -1191,6 +1217,7 @@
             });
         }
 
+        /* Fixed Issue #1: Correctly restores dropdown selections for Settlements in Edit Modal */
         function openEditModal(id) {
             activeEditId = id;
             let rec = records.find(r => r.id === id);
@@ -1199,6 +1226,8 @@
             document.getElementById("editDesc").value = rec.desc;
             document.getElementById("editAmt").value = rec.amount;
             document.getElementById("editDate").value = rec.date;
+            
+            // Populates dropdowns first
             setEditType(rec.type || 'expense');
 
             if(rec.paidBy) document.getElementById("editPayer").value = rec.paidBy;
